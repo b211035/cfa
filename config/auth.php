@@ -14,7 +14,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'web',
+        'guard' => 'user',
         'passwords' => 'users',
     ],
 
@@ -45,6 +45,14 @@ return [
             'driver' => 'token',
             'provider' => 'users',
         ],
+        'user' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'authers',
+        ],
     ],
 
     /*
@@ -68,6 +76,11 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\User::class,
+        ],
+
+        'authers' => [
+            'driver' => 'eloquent',
+            'model' => App\Auther::class,
         ],
 
         // 'users' => [
@@ -94,6 +107,11 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
+            'table' => 'password_resets',
+            'expire' => 60,
+        ],
+        'users' => [
+            'provider' => 'authers',
             'table' => 'password_resets',
             'expire' => 60,
         ],

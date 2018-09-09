@@ -70,8 +70,19 @@
                     </form>
 
                     @if ($Scenarios)
+                            <div class="row border-bottom border-top">
+                                <div class="col">ID</div>
+                                <div class="col">{{ __('Scenario ID') }}</div>
+                                <div class="col">{{ __('Scenarioname') }}</div>
+                                <div class="col"></div>
+                            </div>
                         @foreach ($Scenarios as $Scenario)
-                            <p>{{ $Scenario->scenario_name }}</p>
+                            <div class="row border-bottom">
+                                <div class="col">{{ $Scenario->id }}</div>
+                                <div class="col">{{ $Scenario->scenario_id }}</div>
+                                <div class="col">{{ $Scenario->scenario_name }}</div>
+                                <div class="col"><a href="{{ route('admin_scenario_delete', $Scenario->id) }}">削除</a></div>
+                            </div>
                         @endforeach
                     @endif
 

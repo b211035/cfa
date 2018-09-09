@@ -15,12 +15,16 @@
                     @endif
 
                     @if ($Scenarios)
-                        <ul>
+                        <div class="row border-bottom border-top">
+                            シナリオ選択
+                        </div>
                         @foreach ($Scenarios as $Scenario)
-                            <li><a href="{{ route('talk', $Scenario->id) }}">{{ $Scenario->scenario_name }}</a></li>
+                            <div class="row border-bottom">
+                                <a href="{{ route('talk', $Scenario->id) }}">{{ $Scenario->scenario_name }}</a>
+                            </div>
                         @endforeach
-                        </ul>
                     @endif
+                    <a href="{{ route('log')}}">会話ログ確認</a>
                 </div>
             </div>
         </div>

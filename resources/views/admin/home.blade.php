@@ -9,10 +9,10 @@
 
                 <div class="card-body">
                     <ul>
+                        <li><a href="{{ route('admin_user') }}">ユーザー</a></li>
                         <li><a href="{{ route('admin_bot') }}">ボット</a></li>
                         <li><a href="{{ route('admin_scenario') }}">シナリオ</a></li>
                     </ul>
-                    
                 </div>
             </div>
         </div>

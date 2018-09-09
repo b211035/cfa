@@ -1,10 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Scenario;
 use App\Bot;
+use App\User;
 
 class AdminController extends Controller
 {
@@ -15,7 +18,7 @@ class AdminController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth:admin');
     }
 
     /**
@@ -25,7 +28,7 @@ class AdminController extends Controller
      */
     public function index()
     {
-        return view('admin_home');
+        return view('admin.home');
     }
 
 
@@ -38,7 +41,7 @@ class AdminController extends Controller
     {
         $Bots = Bot::all();
 
-        return view('admin_bot')->with('Bots', $Bots);
+        return view('admin.bot')->with('Bots', $Bots);
     }
 
     /**
@@ -66,12 +69,23 @@ class AdminController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function botDelete($id)
+    {
+        DB::table('bots')->where('id', '=', $id)->delete();
+        return redirect()->route('admin_bot');
+    }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function scenario()
     {
         $Bots = Bot::all();
         $Scenarios = Scenario::all();
 
-        return view('admin_scenario')
+        return view('admin.scenario')
         ->with('Bots', $Bots)
         ->with('Scenarios', $Scenarios);
     }
@@ -96,5 +110,48 @@ class AdminController extends Controller
         ]);
 
         return redirect()->route('admin_scenario');
+    }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function scenarioDelete($id)
+    {
+        DB::table('scenarios')->where('id', '=', $id)->delete();
+        return redirect()->route('admin_scenario');
+    }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function user()
+    {
+        $Users = User::all();
+
+        return view('admin.user')
+        ->with('Users', $Users);
+    }
+
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function userLog($id)
+    {
+        $User = User::find($id);
+        $Logs = DB::table('logs')
+        ->join('bots', 'logs.bot_id', '=', 'bots.id')
+        ->join('scenarios', 'logs.scenario_id', '=', 'scenarios.id')
+        ->where('user_id', '=', $id)->get();
+
+        return view('admin.log')
+        ->with('User', $User)
+        ->with('Logs', $Logs);
     }
 }
