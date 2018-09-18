@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use App\Scenario;
 use App\Bot;
 use App\User;
+use App\Teacher;
 
 class AdminController extends Controller
 {
@@ -153,5 +155,51 @@ class AdminController extends Controller
         return view('admin.log')
         ->with('User', $User)
         ->with('Logs', $Logs);
+    }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function teacher()
+    {
+        $Teachers = Teacher::all();
+
+        return view('admin.teacher')
+        ->with('Teachers', $Teachers);
+    }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function teacherRegist(Request $request)
+    {
+        $validatedData = $request->validate([
+            'login_id' => 'required|string|max:255',
+            'user_name' => 'required|string|max:255',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        Teacher::create([
+            'login_id' => $request->input('login_id'),
+            'user_name' => $request->input('user_name'),
+            'password' => Hash::make($request->input('password')),
+        ]);
+
+        return redirect()->route('admin_teacher');
+    }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function teacherDelete($id)
+    {
+        DB::table('teachers')->where('id', '=', $id)->delete();
+        return redirect()->route('admin_teacher');
     }
 }

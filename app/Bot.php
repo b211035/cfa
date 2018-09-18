@@ -15,7 +15,7 @@ class Bot extends Model
      * @var array
      */
     protected $fillable = [
-        'bot_id', 'bot_name'
+        'bot_id', 'bot_name', 'teacher_id'
     ];
 
 }

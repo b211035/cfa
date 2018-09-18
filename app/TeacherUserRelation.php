@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Scenario extends Model
+class TeacherUserRelation extends Model
 {
     //
     public $timestamps = false;
@@ -15,6 +15,6 @@ class Scenario extends Model
      * @var array
      */
     protected $fillable = [
-        'scenario_id', 'scenario_name', 'bot_id', 'times', 'stage_id', 'teacher_id'
+        'teacher_id', 'user_id'
     ];
 }

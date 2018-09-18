@@ -8,20 +8,26 @@
                 <div class="card-header">Dashboard</div>
 
                 <div class="card-body">
-                    @if ($Users->isNotEmpty())
+                    <p>
+                        <a href="{{ route('admin_teacher_regist') }}" class="btn btn-primary">教師追加</a>
+                    </p>
+                    @if ($Teachers->isNotEmpty())
                             <div class="row border-bottom border-top">
                                 <div class="col">ID</div>
-                                <div class="col">{{ __('Username') }}</div>
+                                <div class="col">{{ __('Teacher ID') }}</div>
+                                <div class="col">{{ __('Teachername') }}</div>
                                 <div class="col"></div>
                             </div>
-                        @foreach ($Users as $User)
+                        @foreach ($Teachers as $Teacher)
                             <div class="row border-bottom">
-                                <div class="col">{{ $User->id }}</div>
-                                <div class="col">{{ $User->user_name }}</div>
-                                <div class="col"><a href="{{ route('admin_user_log', $User->id) }}">会話ログ確認</a></div>
+                                <div class="col">{{ $Teacher->id }}</div>
+                                <div class="col">{{ $Teacher->login_id }}</div>
+                                <div class="col">{{ $Teacher->user_name }}</div>
+                                <div class="col"><a href="{{ route('admin_teacher_delete', $Teacher->id) }}">削除</a></div>
                             </div>
                         @endforeach
                     @endif
+
                     <p>
                         <a href="{{ route('admin_home') }}">戻る</a>
                     </p>

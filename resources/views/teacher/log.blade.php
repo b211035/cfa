@@ -9,7 +9,7 @@
 
                 <div class="card-body">
                     <p>
-                        <a href="{{ route('admin_user_log_scenario_download', [$User->id, 0]) }}" class="btn btn-primary" target="_blank">全ログダウンロード</a>
+                        <a href="{{ route('teacher_user_log_scenario_download', [$User->id, 0]) }}" class="btn btn-primary" target="_blank">全ログダウンロード</a>
                     </p>
                     @if ($Scenarios->isNotEmpty())
                             <div class="row border-bottom border-top">
@@ -19,14 +19,14 @@
                         @foreach ($Scenarios as $Scenario)
                             <div class="row border-bottom">
                                 <div class="col">
-                                    <a href="{{ route('admin_user_log_scenario', [$User->id, $Scenario->id]) }}">{{ $Scenario->scenario_name }}</a>
+                                    <a href="{{ route('teacher_user_log_scenario', [$User->id, $Scenario->id]) }}">{{ $Scenario->scenario_name }}</a>
                                 </div>
-                                <div class="col"><a href="{{ route('admin_user') }}"></a></div>
+                                <div class="col"><a href="{{ route('teacher_user') }}"></a></div>
                             </div>
                         @endforeach
                     @endif
 
-                    <a href="{{ route('admin_user') }}">戻る</a>
+                    <a href="{{ route('teacher_user') }}">戻る</a>
                 </div>
             </div>
         </div>

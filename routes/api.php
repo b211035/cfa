@@ -17,5 +17,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::group(['middleware' => 'api'], function() {
-	Route::post('/repl', 'ReplController@repl')->name('repl');
+	Route::post('/repl', 'ApiController@repl')->name('repl');
+	Route::post('/scenario', 'ApiController@scenario')->name('scenario');
+	Route::post('/log', 'ApiController@log')->name('log');
+	Route::post('/bot', 'ApiController@bot')->name('bot');
+	Route::post('/user', 'ApiController@bot')->name('user');
 });

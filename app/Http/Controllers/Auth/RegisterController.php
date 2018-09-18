@@ -67,7 +67,7 @@ class RegisterController extends Controller
             'login_id' => $data['login_id'],
             'user_name' => $data['user_name'],
             'password' => Hash::make($data['password']),
-            'cfa_flg' => 1,
+            'cfa_flg' => 0,
         ]);
     }
 }
