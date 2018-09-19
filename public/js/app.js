@@ -47494,7 +47494,7 @@ exports = module.exports = __webpack_require__(46)(false);
 
 
 // module
-exports.push([module.i, "\n#talkerea {\n    height: 500px;\n    background-color: #CCFFFF;\n}\n.talkbox{\n    margin: 5px;\n    padding: 5px;\n}\n.usertalk {\n    background-color: #CCFF99;\n}\n.bottalk {\n    background-color: #FFFFFF;\n}\n", ""]);
+exports.push([module.i, "\n#talkerea {\n    height: 500px;\n    background-color: #CCFFFF;\n    overflow-y: scroll;\n    overflow-x: hidden;\n}\n.avatar,\n.talkbox{\n    margin: 5px;\n    padding: 5px;\n}\n.usertalk {\n    background-color: #CCFF99;\n}\n.bottalk {\n    background-color: #FFFFFF;\n}\n", ""]);
 
 // exports
 
@@ -47876,7 +47876,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     props: {
         user_id: [String, Number],
         bot_id: [String, Number],
-        scenario_id: [String, Number]
+        scenario_id: [String, Number],
+        user_avatar: [String]
     },
     data: function data() {
         return {
@@ -47900,12 +47901,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             this.readonly = true;
             if (this.params.contents !== 'init') {
-                this.talkerea = this.talkerea + '<div class="col-6"></div><div class="col align-self-end"><div class="talkbox usertalk rounded">' + this.params.contents + '</div></div>';
+                this.talkerea = this.talkerea + '<div class="col-6"></div>' + '<div class="col align-self-end">' + '<div class="row no-gutters">' + '<div class="col talkbox usertalk rounded">' + this.params.contents + '</div>' + '<div class="col-auto avatar">' + '<img src="' + this.user_avatar + '" height="32px" width="32px">' + '</div>' + '</div>' + '</div>';
             }
 
             this.$http.post('/api/repl', this.params).then(function (response) {
                 _this.params.contents = '';
-                _this.talkerea = _this.talkerea + '<div class="col-6 justify-content-start"><div class="talkbox bottalk rounded">' + response.data.systemText.expression + '</div></div><div class="col-6"></div>';
+                _this.talkerea = _this.talkerea + '<div class="col-6 justify-content-start">' + '<div class="row no-gutters">' + '<div class="col-auto avatar">' + '<img src="' + response.data.avatarImage + '" height="32px" width="32px">' + '</div>' + '<div class="col talkbox bottalk rounded">' + response.data.systemText.expression + '</div></div></div><div class="col-6"></div>';
                 _this.readonly = false;
             }).then(function () {
                 // always executed

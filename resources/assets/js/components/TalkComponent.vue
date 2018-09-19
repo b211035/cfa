@@ -26,7 +26,8 @@
         props: {
             user_id: [String, Number],
             bot_id: [String, Number],
-            scenario_id: [String, Number]
+            scenario_id: [String, Number],
+            user_avatar: [String]
         },
         data: function () {
             return {
@@ -46,30 +47,46 @@
                     return;
                 }
 
-                this.readonly = true; 
+                this.readonly = true;
                 if (this.params.contents !== 'init') {
                     this.talkerea = this.talkerea
-                     + '<div class="col-6"></div><div class="col align-self-end"><div class="talkbox usertalk rounded">'
-                     + this.params.contents 
-                     + '</div></div>';
-                }
+                     + '<div class="col-6"></div>'
+                     + '<div class="col align-self-end">'
+                         + '<div class="row no-gutters">'
+                             + '<div class="col talkbox usertalk rounded">'
+                                 + this.params.contents
+                             + '</div>'
+                             + '<div class="col-auto avatar">'
+                                 + '<img src="'
+                                 + this.user_avatar
+                                 + '" height="32px" width="32px">'
+                             + '</div>'
+                         + '</div>'
+                     + '</div>'
+                    }
 
                 this.$http.post('/api/repl', this.params)
                     .then(
                         response =>  {
                             this.params.contents = '';
                             this.talkerea = this.talkerea
-                             + '<div class="col-6 justify-content-start"><div class="talkbox bottalk rounded">'
-                             + response.data.systemText.expression 
-                             + '</div></div><div class="col-6"></div>';
-                        this.readonly = false; 
+                             + '<div class="col-6 justify-content-start">'
+                             + '<div class="row no-gutters">'
+                             + '<div class="col-auto avatar">'
+                             + '<img src="'
+                             + response.data.avatarImage
+                             + '" height="32px" width="32px">'
+                             + '</div>'
+                             + '<div class="col talkbox bottalk rounded">'
+                             + response.data.systemText.expression
+                             + '</div></div></div><div class="col-6"></div>';
+                        this.readonly = false;
                     })
                     .then(function () {
                         // always executed
-                        this.readonly = false; 
+                        this.readonly = false;
                         this.params.contents = '';
                     });
-
             }
         },
         mounted() {
@@ -83,8 +100,11 @@
     #talkerea {
         height: 500px;
         background-color: #CCFFFF;
+        overflow-y: scroll;
+        overflow-x: hidden;
     }
 
+    .avatar,
     .talkbox{
         margin: 5px;
         padding: 5px;

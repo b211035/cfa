@@ -33,6 +33,13 @@ class ScenarioController extends Controller
 
         $Scenarios = DB::table('scenarios')
         ->join('stages', 'scenarios.stage_id', '=', 'stages.id')
+        ->select(
+            'scenarios.id',
+            'scenarios.scenario_id',
+            'scenarios.scenario_name',
+            'scenarios.times',
+            'stages.stage_name'
+        )
         ->where('scenarios.teacher_id', '=', $Teacher->id)
         ->orderBy('scenarios.id', 'asc')
         ->get();
@@ -133,14 +140,14 @@ class ScenarioController extends Controller
         ]);
 
         $Scenario = Scenario::find($id);
-        $Scenario->scenario_id = $request->input('bot_id');
-        $Scenario->scenario_name = $request->input('bot_name');
+        $Scenario->scenario_id = $request->input('scenario_id');
+        $Scenario->scenario_name = $request->input('scenario_name');
         $Scenario->bot_id = $request->input('bot_id');
         $Scenario->stage_id = $request->input('stage_id');
         $Scenario->times = $request->input('times');
         $Scenario->save();
 
-        return redirect()->route('teacher_bot');
+        return redirect()->route('teacher_scenario');
     }
 
     /**

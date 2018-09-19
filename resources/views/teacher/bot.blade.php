@@ -18,12 +18,14 @@
                                 <div class="col">{{ __('Botname') }}</div>
                                 <div class="col"></div>
                                 <div class="col"></div>
+                                <div class="col"></div>
                             </div>
                         @foreach ($Bots as $Bot)
                             <div class="row border-bottom">
                                 <div class="col">{{ $Bot->id }}</div>
                                 <div class="col">{{ $Bot->bot_id }}</div>
                                 <div class="col">{{ $Bot->bot_name }}</div>
+                                <div class="col"><a href="{{ route('teacher_bot_avatar', $Bot->id) }}">アバター設定</a></div>
                                 <div class="col"><a href="{{ route('teacher_bot_update', $Bot->id) }}">編集</a></div>
                                 <div class="col"><a href="{{ route('teacher_bot_delete', $Bot->id) }}">削除</a></div>
                             </div>

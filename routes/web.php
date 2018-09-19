@@ -13,7 +13,7 @@
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('root');
 
 // Authentication Routes...
 Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
@@ -27,7 +27,16 @@ Route::post('register', 'Auth\RegisterController@register');
 // main
 Route::get('home', 'HomeController@index')->name('home');
 Route::get('talk/{id}', 'HomeController@talk')->name('talk');
-Route::get('log', 'HomeController@log')->name('log');
+Route::get('log/{id}', 'HomeController@log')->name('log');
+
+
+Route::get('avatar', 'UserAvatarController@index')->name('user_avatar');
+Route::get('avatar/regist', 'UserAvatarController@registForm')->name('user_avatar_regist');
+Route::post('avatar/regist', 'UserAvatarController@regist');
+Route::get('avatar/update/{avatar_id}', 'UserAvatarController@updateForm')->name('user_avatar_update');
+Route::post('avatar/update/{avatar_id}', 'UserAvatarController@update');
+Route::get('avatar/delete/{avatar_id}', 'UserAvatarController@delete')->name('user_avatar_delete');
+
 
 // teacher
 Route::prefix('teacher')->group(function () {
@@ -39,6 +48,13 @@ Route::prefix('teacher')->group(function () {
     Route::get('bot/update/{id}', 'Teacher\BotController@updateForm')->name('teacher_bot_update');
     Route::post('bot/update/{id}', 'Teacher\BotController@update');
     Route::get('bot/delete/{id}', 'Teacher\BotController@delete')->name('teacher_bot_delete');
+
+    Route::get('bot/{bot_id}/avatar', 'Teacher\BotAvatarController@index')->name('teacher_bot_avatar');
+    Route::get('bot/{bot_id}/avatar/regist', 'Teacher\BotAvatarController@registForm')->name('teacher_bot_avatar_regist');
+    Route::post('bot/{bot_id}/avatar/regist', 'Teacher\BotAvatarController@regist');
+    Route::get('bot/{bot_id}/avatar/update/{avatar_id}', 'Teacher\BotAvatarController@updateForm')->name('teacher_bot_avatar_update');
+    Route::post('bot/{bot_id}/avatar/update/{avatar_id}', 'Teacher\BotAvatarController@update');
+    Route::get('bot/{bot_id}/avatar/delete/{avatar_id}', 'Teacher\BotAvatarController@delete')->name('teacher_bot_avatar_delete');
 
     Route::get('scenario', 'Teacher\ScenarioController@index')->name('teacher_scenario');
     Route::get('scenario/regist', 'Teacher\ScenarioController@registForm')->name('teacher_scenario_regist');

@@ -141,6 +141,13 @@ class UserController extends Controller
         $Logs = DB::table('logs')
         ->join('bots', 'logs.bot_id', '=', 'bots.id')
         ->join('scenarios', 'logs.scenario_id', '=', 'scenarios.id')
+        ->select(
+            'scenarios.scenario_name',
+            'bots.bot_name',
+            'logs.sender_flg',
+            'logs.contents',
+            'logs.send_date'
+        )
         ->where('user_id', '=', $user_id)
         ->where('scenarios.id', '=', $scenario_id)
         ->get();

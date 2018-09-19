@@ -94,6 +94,20 @@ class ApiController extends Controller
         $result = json_decode($response, true);
         curl_close($curl);
 
+        $result['avatarImage'] = route('root') . '/storage/default_avatar.png';
+
+        if (preg_match('/\\\s\d+/u',  $result['systemText']['expression'], $matches)) {
+            $result['systemText']['expression'] = str_replace($matches[0], '', $result['systemText']['expression']);
+            $protcol = str_replace('\s', '', $matches[0]);
+            $BotAvatar = DB::table('bot_avatars')
+            ->where('bot_id', '=', $Bot->id)
+            ->where('protcol', '=', $protcol)
+            ->first();
+            if ($BotAvatar) {
+                $result['avatarImage'] = route('root') . '/storage/bot/'.$BotAvatar->filename;
+            }
+        }
+
         Log::create([
             'user_id' => $User->id,
             'bot_id' => $Bot->id,

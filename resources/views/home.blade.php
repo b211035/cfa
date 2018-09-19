@@ -13,18 +13,30 @@
                             {{ session('status') }}
                         </div>
                     @endif
+                    <p>
+                        <a href="{{ route('user_avatar') }}">アバター設定</a>
+                    </p>
 
-                    @if ($Scenarios)
+                    @if ($matrix)
                         <div class="row border-bottom border-top">
                             シナリオ選択
                         </div>
-                        @foreach ($Scenarios as $Scenario)
+                        @foreach ($matrix as $stage)
                             <div class="row border-bottom">
-                                <a href="{{ route('talk', $Scenario->id) }}">{{ $Scenario->scenario_name }}</a>
+                                @for ($i = 1; $i < 5; $i++)
+                                <div class="col-3">
+                                    @if (isset($stage[$i]))
+                                        @if ($stage[$i]->haslog > 1)
+                                        <a href="{{ route('log', $stage[$i]->id) }}">{{ $stage[$i]->scenario_name }}</a>
+                                        @else
+                                        <a href="{{ route('talk', $stage[$i]->id) }}">{{ $stage[$i]->scenario_name }}</a>
+                                        @endif
+                                    @endif
+                                </div>
+                                @endfor
                             </div>
                         @endforeach
                     @endif
-                    <a href="{{ route('log')}}">会話ログ確認</a>
                 </div>
             </div>
         </div>
