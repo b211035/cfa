@@ -23,6 +23,11 @@
                         </div>
                         @foreach ($matrix as $stage)
                             <div class="row border-bottom">
+                                <div class="col">
+                                    {{ $stage[1]->stage_name }}
+                                </div>
+                            </div>
+                            <div class="row border-bottom">
                                 @for ($i = 1; $i < 5; $i++)
                                 <div class="col-3">
                                     @if (isset($stage[$i]))

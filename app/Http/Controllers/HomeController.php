@@ -76,8 +76,36 @@ class HomeController extends Controller
         ->orderBy('id', 'asc')
         ->first();
 
+        $Repluser = Repluser::where([ ['user_id', $User->id], ['bot_id', $Bot->id] ])->first();
+
+        if (!$Repluser) {
+            $header = ['Content-Type: application/json', 'x-api-key: '.$api_key];
+            $body = ['botId' => $Bot->bot_id];
+
+            $option = [
+                CURLOPT_URL => 'https://api.repl-ai.jp/v1/registration',
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_HTTPHEADER => $header,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_POSTFIELDS => json_encode($body),
+            ];
+
+            $curl = curl_init();
+            curl_setopt_array($curl, $option);
+            $response = curl_exec($curl);
+            $result = json_decode($response, true);
+            curl_close($curl);
+
+            $Repluser = Repluser::create([
+                'user_id' => $User->id,
+                'bot_id' => $Bot->id,
+                'repl_user_id' => $result['appUserId'],
+            ]);
+        }
+
         return view('talk')
         ->with('User', $User)
+        ->with('Repluser', $Repluser)
         ->with('Scenario', $Scenario)
         ->with('Bot', $Bot)
         ->with('UserAvatar', $UserAvatar);

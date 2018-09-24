@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use App\User;
 use App\Scenario;
 use App\Bot;
@@ -27,36 +28,11 @@ class ApiController extends Controller
     {
         $api_key = \Config::get('const.api_key');
 
-        $User = User::find($request->input('user_id'));
-        $Bot = Bot::find($request->input('bot_id'));
-        $Scenario = Scenario::find($request->input('scenario_id'));
+        $Repluser = Repluser::where([ ['repl_user_id', $request->input('user_id')] ])->first();
+        $Bot = Bot::where([ ['bot_id', $request->input('bot_id')] ])->first();
+        $Scenario = Scenario::where([ ['scenario_id', $request->input('scenario_id')] ])->first();
 
-        $Repluser = Repluser::where([ ['user_id', $User->id], ['bot_id', $Bot->id] ])->first();
-
-        if (!$Repluser) {
-            $header = ['Content-Type: application/json', 'x-api-key: '.$api_key];
-            $body = ['botId' => $Bot->bot_id];
-
-            $option = [
-                CURLOPT_URL => 'https://api.repl-ai.jp/v1/registration',
-                CURLOPT_CUSTOMREQUEST => 'POST',
-                CURLOPT_HTTPHEADER => $header,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_POSTFIELDS => json_encode($body),
-            ];
-
-            $curl = curl_init();
-            curl_setopt_array($curl, $option);
-            $response = curl_exec($curl);
-            $result = json_decode($response, true);
-            curl_close($curl);
-
-            $Repluser = Repluser::create([
-                'user_id' => $User->id,
-                'bot_id' => $Bot->id,
-                'repl_user_id' => $result['appUserId'],
-            ]);
-        }
+        $User = User::where([ ['id', $Repluser->user_id] ])->first();
 
         $contents = $request->input('contents');
         $Date = new \Datetime();
@@ -270,5 +246,143 @@ class ApiController extends Controller
         $User = $query->get();
 
         return response()->json($User);
+    }
+
+    public function userCheck(Request $request) {
+        $data = $request->input();
+
+        // 該当ログインIDのユーザーを検索
+        $User = User::where('login_id', $data['username'])->get()->first();
+
+        if ($User && $User->cfa_flg != 1) {
+            $credentials = [
+                'login_id' => $data['username'],
+                'password' => $data['password']
+            ];
+
+            // ユーザー登録済みでＣＦＡ連携以外の場合
+            if (Auth::once($credentials)) {
+
+            } else {
+                return response()->json(['code' => 404, 'user' => []]);
+            }
+        } else {
+            $header = ['Content-Type: application/json'];
+            $body = [
+                'username' => $data['username'],
+                'password' => $data['password']
+            ];
+
+            $option = [
+                CURLOPT_URL => 'http://dev.coachforall.jp/api/usercheck',
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_HTTPHEADER => $header,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_POSTFIELDS => json_encode($body),
+            ];
+
+            $curl = curl_init();
+            curl_setopt_array($curl, $option);
+            $response = curl_exec($curl);
+            $result = json_decode($response, true);
+            curl_close($curl);
+
+            if ($result['code'] == 200) {
+                // CFAでログイン検証に成功した
+                if ($User) {
+                    // 連携済みならそのアカウントでログイン
+                } else{
+                    // 未連携ならアカウント作成
+                    $User = User::create([
+                        'login_id' => $result['user']['account'],
+                        'user_name' => $result['user']['name'],
+                        'cfa_flg' => 1,
+                    ]);
+                }
+            } else {
+                return response()->json(['code' => 404, 'user' => []]);
+            }
+        }
+
+        $result = [
+            'user_id' => $User->login_id,
+            'user_name' => $User->user_name
+        ];
+
+        $query = DB::table('bots')
+            ->join('teacher_user_relations', 'bots.teacher_id', '=', 'teacher_user_relations.teacher_id')
+            ->where('teacher_user_relations.user_id', '=', $User->id)
+            ->select(
+                'bots.id',
+                'bots.bot_id',
+                'bots.bot_name'
+            )
+            ->orderBy('bots.id', 'asc');
+        $Bots = $query->get();
+
+        foreach ($Bots as $Bot) {
+            $Repluser = Repluser::where([ ['user_id', $User->id], ['bot_id', $Bot->id] ])->first();
+
+            if (!$Repluser) {
+                $header = ['Content-Type: application/json', 'x-api-key: '.$api_key];
+                $body = ['botId' => $Bot->bot_id];
+
+                $option = [
+                    CURLOPT_URL => 'https://api.repl-ai.jp/v1/registration',
+                    CURLOPT_CUSTOMREQUEST => 'POST',
+                    CURLOPT_HTTPHEADER => $header,
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_POSTFIELDS => json_encode($body),
+                ];
+
+                $curl = curl_init();
+                curl_setopt_array($curl, $option);
+                $response = curl_exec($curl);
+                $result = json_decode($response, true);
+                curl_close($curl);
+
+                $Repluser = Repluser::create([
+                    'user_id' => $User->id,
+                    'bot_id' => $Bot->id,
+                    'repl_user_id' => $result['appUserId'],
+                ]);
+            }
+            $Bot->repl_user_id = $Repluser->repl_user_id;
+
+            $query = DB::table('scenarios')
+                ->join('stages', 'scenarios.stage_id', '=', 'stages.id')
+                ->join('teacher_user_relations', 'scenarios.teacher_id', '=', 'teacher_user_relations.teacher_id')
+                ->select(
+                    'scenarios.id',
+                    'scenarios.scenario_id',
+                    'scenarios.scenario_name',
+                    'scenarios.times',
+                    'stages.stage_name'
+                )
+                ->where('teacher_user_relations.user_id', '=', $User->id)
+                ->where('scenarios.bot_id', '=', $Bot->id)
+                ->orderBy('scenarios.id', 'asc');
+            $Scenarios = $query->get();
+
+            foreach ($Scenarios as $Scenario) {
+                $query = DB::table('logs')
+                    ->select(
+                        'sender_flg',
+                        'contents',
+                        'send_date'
+                    )
+                    ->where('user_id', '=', $User->id)
+                    ->where('scenario_id', '=', $Scenario->id)
+                    ->orderBy('logs.id', 'asc');
+                $Logs = $query->get();
+
+                $Scenario->logs = $Logs;
+            }
+            $Bot->scenarios = $Scenarios;
+        }
+
+        $result['bots'] = $Bots;
+
+        return response()->json(['code' => 200, 'user' => $result]);
     }
 }

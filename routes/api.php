@@ -21,5 +21,6 @@ Route::group(['middleware' => 'api'], function() {
 	Route::post('/scenario', 'ApiController@scenario')->name('scenario');
 	Route::post('/log', 'ApiController@log')->name('log');
 	Route::post('/bot', 'ApiController@bot')->name('bot');
-	Route::post('/user', 'ApiController@bot')->name('user');
+	Route::post('/user', 'ApiController@user')->name('user');
+	Route::post('/usercheck', 'ApiController@userCheck')->name('user');
 });
