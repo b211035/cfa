@@ -79,6 +79,7 @@ class HomeController extends Controller
         $Repluser = Repluser::where([ ['user_id', $User->id], ['bot_id', $Bot->id] ])->first();
 
         if (!$Repluser) {
+            $api_key = \Config::get('const.api_key');
             $header = ['Content-Type: application/json', 'x-api-key: '.$api_key];
             $body = ['botId' => $Bot->bot_id];
 
