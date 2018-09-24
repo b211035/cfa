@@ -324,6 +324,7 @@ class ApiController extends Controller
             $Repluser = Repluser::where([ ['user_id', $User->id], ['bot_id', $Bot->id] ])->first();
 
             if (!$Repluser) {
+                $api_key = \Config::get('const.api_key');
                 $header = ['Content-Type: application/json', 'x-api-key: '.$api_key];
                 $body = ['botId' => $Bot->bot_id];
 
@@ -338,14 +339,19 @@ class ApiController extends Controller
                 $curl = curl_init();
                 curl_setopt_array($curl, $option);
                 $response = curl_exec($curl);
-                $result = json_decode($response, true);
+                $apiresult = json_decode($response, true);
                 curl_close($curl);
 
-                $Repluser = Repluser::create([
-                    'user_id' => $User->id,
-                    'bot_id' => $Bot->id,
-                    'repl_user_id' => $result['appUserId'],
-                ]);
+                if (isset($apiresult['appUserId'])) {
+                    $Repluser = Repluser::create([
+                        'user_id' => $User->id,
+                        'bot_id' => $Bot->id,
+                        'repl_user_id' => $apiresult['appUserId'],
+                    ]);
+                } else {
+                    $Repluser = new \stdClass();
+                    $Repluser->repl_user_id = null;
+                }
             }
             $Bot->repl_user_id = $Repluser->repl_user_id;
 
