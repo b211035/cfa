@@ -26,6 +26,10 @@
                                     喜び
                                     @elseif ($BotAvatar->protcol == 2)
                                     悲しみ
+                                    @elseif ($BotAvatar->protcol == 4)
+                                    怒り
+                                    @elseif ($BotAvatar->protcol == 5)
+                                    エール
                                     @endif
                                 </div>
                                 <div class="col"> <img src="{{ route('root') }}/storage/bot/{{ $BotAvatar->filename }}"></div>
