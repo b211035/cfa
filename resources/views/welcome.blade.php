@@ -5,12 +5,13 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+        <title>CoachForAll</title>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
 
         <!-- Styles -->
+        <link href="css/app.css" rel="stylesheet" type="text/css">
         <style>
             html, body {
                 background-color: #fff;
@@ -43,8 +44,29 @@
 
             .content {
                 text-align: center;
+		padding: 0.5em 1em;
+    		margin: 2em 0;
+    		font-weight: bold;
+    		color: #6091d3;/*文字色*/
+   		background: #FFF;
+   		border: solid 3px #6091d3;/*線*/
+    		border-radius: 10px;/*角の丸み*/
             }
 
+	    .link_btn {
+ 		position: relative;
+    		display: inline-block;
+    		font-weight: bold;
+    		padding: 0.25em 0.5em;
+    		text-decoration: none;
+    		color: #00BCD4;
+    		background: #ECECEC;
+    		transition: .4s;
+	    }
+	    .link_btn:hover {
+    		background: #00bcd4;
+ 		color: white;
+	    }
             .title {
                 font-size: 84px;
             }
@@ -66,7 +88,7 @@
     </head>
     <body>
         <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
+       <!--     @if (Route::has('login'))
                 <div class="top-right links">
                     @auth
                         <a href="{{ url('/home') }}">Home</a>
@@ -76,18 +98,22 @@
                     @endauth
                 </div>
             @endif
-
+	-->
             <div class="content">
                 <div class="title m-b-md">
-                    Laravel
+		    <img src="images/cfa_logo.png" width=100%>
                 </div>
 
                 <div class="links">
-                    <a href="https://laravel.com/docs">Documentation</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
+		 @if (Route::has('login'))
+                	  @auth
+                	        <a href="{{ url('/home') }}" class="link_btn">Home</a>
+                	    @else
+                	        <a href="{{ route('login') }}" class="link_btn">ログイン</a>
+                	        <a href="{{ route('register') }}" class="link_btn">登録</a>
+                	    @endauth
+           	 @endif
+                </div>
                 </div>
             </div>
         </div>
