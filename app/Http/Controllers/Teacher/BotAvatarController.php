@@ -58,7 +58,7 @@ class BotAvatarController extends Controller
     public function regist(Request $request, $bot_id)
     {
         $validatedData = $request->validate([
-            'protcol' => 'required|integer|min:0|max:2',
+            'protcol' => 'required|integer|min:0|max:5',
             'avatar' => 'required|file|image',
         ]);
 

@@ -86,7 +86,7 @@ class ApiController extends Controller
             $protcol = str_replace('\s', '', $matches[0]);
             $BotAvatar = DB::table('bot_avatars')
             ->where('bot_id', '=', $Bot->id)
-            ->where('protcol', '=', $protcol)
+            ->where('protcol', '=', (int)$protcol)
             ->first();
             if ($BotAvatar) {
                 $result['avatarImage'] = route('root') . '/storage/bot/'.$BotAvatar->filename;
@@ -364,36 +364,45 @@ class ApiController extends Controller
             }
             $Bot->repl_user_id = $Repluser->repl_user_id;
 
-            $query = DB::table('scenarios')
-                ->join('stages', 'scenarios.stage_id', '=', 'stages.id')
-                ->join('teacher_user_relations', 'scenarios.teacher_id', '=', 'teacher_user_relations.teacher_id')
+            $query = DB::table('stages')
+                ->join('teacher_user_relations', 'stages.teacher_id', '=', 'teacher_user_relations.teacher_id')
                 ->select(
-                    'scenarios.id',
-                    'scenarios.scenario_id',
-                    'scenarios.scenario_name',
-                    'scenarios.times',
+                    'stages.id',
                     'stages.stage_name'
                 )
                 ->where('teacher_user_relations.user_id', '=', $User->id)
-                ->where('scenarios.bot_id', '=', $Bot->id)
-                ->orderBy('scenarios.id', 'asc');
-            $Scenarios = $query->get();
+                ->orderBy('stages.id', 'asc');
+            $Stages = $query->get();
 
-            foreach ($Scenarios as $Scenario) {
-                $query = DB::table('logs')
+            foreach ($Stages as $Stage) {
+                $query = DB::table('scenarios')
                     ->select(
-                        'sender_flg',
-                        'contents',
-                        'send_date'
+                        'id',
+                        'scenario_id',
+                        'scenario_name',
+                        'times'
                     )
-                    ->where('user_id', '=', $User->id)
-                    ->where('scenario_id', '=', $Scenario->id)
-                    ->orderBy('logs.id', 'asc');
-                $Logs = $query->get();
+                    ->where('stage_id', '=', $Stage->id)
+                    ->orderBy('scenarios.id', 'asc');
+                $Scenarios = $query->get();
 
-                $Scenario->logs = $Logs;
+                foreach ($Scenarios as $Scenario) {
+                    $query = DB::table('logs')
+                        ->select(
+                            'sender_flg',
+                            'contents',
+                            'send_date'
+                        )
+                        ->where('user_id', '=', $User->id)
+                        ->where('scenario_id', '=', $Scenario->id)
+                        ->orderBy('logs.id', 'asc');
+                    $Logs = $query->get();
+
+                    $Scenario->logs = $Logs;
+                }
+                $Stage->scenarios = $Scenarios;
             }
-            $Bot->scenarios = $Scenarios;
+            $Bot->stages = $Stages;
         }
 
         $result['bots'] = $Bots;
