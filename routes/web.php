@@ -29,6 +29,9 @@ Route::get('home', 'HomeController@index')->name('home');
 Route::get('talk/{id}', 'HomeController@talk')->name('talk');
 Route::get('log/{id}', 'HomeController@log')->name('log');
 
+Route::get('profile', 'HomeController@profile')->name('profile');
+Route::get('school', 'HomeController@schoolRegistForm')->name('user_school');
+Route::post('school', 'HomeController@schoolRegist');
 
 Route::get('avatar', 'UserAvatarController@index')->name('user_avatar');
 Route::get('avatar/regist', 'UserAvatarController@registForm')->name('user_avatar_regist');
@@ -41,6 +44,10 @@ Route::get('avatar/delete/{avatar_id}', 'UserAvatarController@delete')->name('us
 // teacher
 Route::prefix('teacher')->group(function () {
     Route::get('/', 'Teacher\TeacherController@index')->name('teacher_home');
+    Route::get('profile', 'Teacher\TeacherController@profile')->name('teacher_profile');
+    Route::get('school', 'Teacher\TeacherController@schoolRegistForm')->name('teacher_school');
+    Route::post('school', 'Teacher\TeacherController@schoolRegist');
+
 
     Route::get('bot', 'Teacher\BotController@index')->name('teacher_bot');
     Route::get('bot/regist', 'Teacher\BotController@registForm')->name('teacher_bot_regist');
@@ -103,6 +110,11 @@ Route::prefix('admin')->group(function () {
     Route::get('teacher/regist', 'Admin\TeacherController@registForm')->name('admin_teacher_regist');
     Route::post('teacher/regist', 'Admin\TeacherController@regist');
     Route::get('teacher/delete/{id}', 'Admin\TeacherController@delete')->name('admin_teacher_delete');
+
+    Route::get('school', 'Admin\SchoolController@index')->name('admin_school');
+    Route::get('school/regist', 'Admin\SchoolController@registForm')->name('admin_school_regist');
+    Route::post('school/regist', 'Admin\SchoolController@regist');
+    Route::get('school/delete/{id}', 'Admin\SchoolController@delete')->name('admin_school_delete');
 
     Route::get('login', 'Admin\LoginController@showLoginForm')->name('admin_login');
     Route::post('login', 'Admin\LoginController@login');

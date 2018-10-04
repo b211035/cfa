@@ -110,7 +110,6 @@
                 	        <a href="{{ url('/home') }}" class="link_btn">Home</a>
                 	    @else
                 	        <a href="{{ route('login') }}" class="link_btn">ログイン</a>
-                	        <a href="{{ route('register') }}" class="link_btn">登録</a>
                 	    @endauth
            	 @endif
                 </div>

@@ -17,7 +17,7 @@ class Teacher extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'login_id', 'password', 'user_name'
+        'login_id', 'password', 'user_name', 'school_id'
     ];
 
     /**

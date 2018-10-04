@@ -66,11 +66,16 @@ class LoginController extends Controller
             return $this->sendLockoutResponse($request);
         }
 
-        // Ô“µ±¥í¥°¥¤¥óID¤Î¥æ©`¥¶©`¤ò—ÊË÷
+        $credentials = $request->only($this->username(), 'password');
+        if (Auth::guard('teacher')->attempt($credentials)) {
+            return redirect()->route('teacher_home');
+        }
+
+        // è©²å½“ãƒ­ã‚°ã‚¤ãƒ³IDã®ãƒ¦ãƒ¼ã‚¶ãƒ¼ã‚’æ¤œç´¢
         $User = User::where($this->username(), $request->input($this->username()))->get()->first();
 
         if ($User && $User->cfa_flg != 1) {
-            // ¥æ©`¥¶©`µÇåhœg¤ß¤Ç£Ã£Æ£ÁßBĞ¯ÒÔÍâ¤ÎˆöºÏ
+            // ãƒ¦ãƒ¼ã‚¶ãƒ¼ç™»éŒ²æ¸ˆã¿ã§ï¼£ï¼¦ï¼¡é€£æºä»¥å¤–ã®å ´åˆ
             if ($this->attemptLogin($request)) {
                 return $this->sendLoginResponse($request);
             }
@@ -96,11 +101,11 @@ class LoginController extends Controller
             curl_close($curl);
 
             if ($result['code'] == 200) {
-                // CFA¤Ç¥í¥°¥¤¥ó—ÊÔ^¤Ë³É¹¦¤·¤¿
+                // CFAã§ãƒ­ã‚°ã‚¤ãƒ³æ¤œè¨¼ã«æˆåŠŸã—ãŸ
                 if ($User) {
-                    // ßBĞ¯œg¤ß¤Ê¤é¤½¤Î¥¢¥«¥¦¥ó¥È¤Ç¥í¥°¥¤¥ó
+                    // é€£æºæ¸ˆã¿ãªã‚‰ãã®ã‚¢ã‚«ã‚¦ãƒ³ãƒˆã§ãƒ­ã‚°ã‚¤ãƒ³
                 } else{
-                    // Î´ßBĞ¯¤Ê¤é¥¢¥«¥¦¥ó¥È×÷³É
+                    // æœªé€£æºãªã‚‰ã‚¢ã‚«ã‚¦ãƒ³ãƒˆä½œæˆ
                     $User = User::create([
                         'login_id' => $result['user']['account'],
                         'user_name' => $result['user']['name'],

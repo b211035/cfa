@@ -30,12 +30,15 @@ class UserController extends Controller
      */
     public function index()
     {
+        $Teacher = Auth::user();
         $Users = DB::table('users')
         ->leftjoin('teacher_user_relations', function ($join) {
             $Teacher = Auth::user();
             $join->on('teacher_user_relations.user_id', '=', 'users.id')
-                 ->where('teacher_user_relations.teacher_id', '=', $Teacher->id);
+                ->where('teacher_user_relations.teacher_id', '=', $Teacher->id);
         })
+        ->whereNotNull('users.school_id')
+        ->where('users.school_id', '=', $Teacher->school_id)
         ->select('users.id', 'users.user_name', 'teacher_user_relations.teacher_id')
         ->orderBy('users.id', 'asc')
         ->get();

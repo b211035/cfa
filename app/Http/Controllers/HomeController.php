@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Scenario;
 use App\Bot;
 use App\Repluser;
+use App\School;
 
 class HomeController extends Controller
 {
@@ -137,5 +138,43 @@ class HomeController extends Controller
         return view('log')
         ->with('User', $User)
         ->with('Logs', $Logs);
+    }
+
+    public function profile(){
+        return view('profile');
+    }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function schoolRegistForm(Request $request)
+    {
+        $Schools = School::all();
+        $User = Auth::user();
+
+        return view('school')
+        ->with('User', $User)
+        ->with('Schools', $Schools)
+;
+    }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function schoolRegist(Request $request)
+    {
+        $validatedData = $request->validate([
+            'school_id' => 'required|exists:schools,id',
+        ]);
+
+        $User = Auth::user();
+        $User->school_id = $request->input('school_id');
+        $User->save();
+
+        return redirect()->route('profile');
     }
 }

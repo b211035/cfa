@@ -55,7 +55,7 @@ class BotController extends Controller
     {
         $validatedData = $request->validate([
             'id' => 'exists:bots,id',
-            'bot_id' => 'unique:bots|required|string|max:255',
+            'bot_id' => 'required|string|max:255',
             'bot_name' => 'required|string|max:255',
         ]);
 

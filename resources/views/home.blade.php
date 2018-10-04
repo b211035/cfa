@@ -14,7 +14,7 @@
                         </div>
                     @endif
                     <p>
-                        <a href="{{ route('user_avatar') }}">アバター設定</a>
+                        <a href="{{ route('profile') }}">プロフィール設定</a>
                     </p>
 
                     @if ($matrix)

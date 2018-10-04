@@ -15,6 +15,12 @@
                             <button id="talk" class="btn btn-default" v-on:click="talkMessage" v-bind:disabled="readonly">発話</button>
                         </div>
                     </div>
+                    <div id="talkerea">
+                        <p>
+                            <a href="{{ route('home') }}">戻る</a>
+                        </p>
+                    </div>
+
                 </div>
             </div>
         </div>

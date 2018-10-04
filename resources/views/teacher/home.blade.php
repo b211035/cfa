@@ -9,6 +9,7 @@
 
                 <div class="card-body">
                     <ul>
+                        <li><a href="{{ route('teacher_profile') }}">プロフィール設定</a></li>
                         <li><a href="{{ route('teacher_user') }}">ユーザー</a></li>
                         <li><a href="{{ route('teacher_bot') }}">ボット</a></li>
                         <li><a href="{{ route('teacher_stage') }}">ステージ</a></li>
