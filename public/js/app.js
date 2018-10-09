@@ -14099,7 +14099,7 @@ if (token) {
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.17.10';
+  var VERSION = '4.17.11';
 
   /** Used as the size to enable large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;
@@ -14363,7 +14363,7 @@ if (token) {
   var reHasUnicode = RegExp('[' + rsZWJ + rsAstralRange  + rsComboRange + rsVarRange + ']');
 
   /** Used to detect strings that need a more robust regexp to match words. */
-  var reHasUnicodeWord = /[a-z][A-Z]|[A-Z]{2,}[a-z]|[0-9][a-zA-Z]|[a-zA-Z][0-9]|[^a-zA-Z0-9 ]/;
+  var reHasUnicodeWord = /[a-z][A-Z]|[A-Z]{2}[a-z]|[0-9][a-zA-Z]|[a-zA-Z][0-9]|[^a-zA-Z0-9 ]/;
 
   /** Used to assign default `context` object properties. */
   var contextProps = [
@@ -15309,20 +15309,6 @@ if (token) {
       }
     }
     return result;
-  }
-
-  /**
-   * Gets the value at `key`, unless `key` is "__proto__".
-   *
-   * @private
-   * @param {Object} object The object to query.
-   * @param {string} key The key of the property to get.
-   * @returns {*} Returns the property value.
-   */
-  function safeGet(object, key) {
-    return key == '__proto__'
-      ? undefined
-      : object[key];
   }
 
   /**
@@ -17782,7 +17768,7 @@ if (token) {
           if (isArguments(objValue)) {
             newValue = toPlainObject(objValue);
           }
-          else if (!isObject(objValue) || (srcIndex && isFunction(objValue))) {
+          else if (!isObject(objValue) || isFunction(objValue)) {
             newValue = initCloneObject(srcValue);
           }
         }
@@ -20703,6 +20689,22 @@ if (token) {
         array[length] = isIndex(index, arrLength) ? oldArray[index] : undefined;
       }
       return array;
+    }
+
+    /**
+     * Gets the value at `key`, unless `key` is "__proto__".
+     *
+     * @private
+     * @param {Object} object The object to query.
+     * @param {string} key The key of the property to get.
+     * @returns {*} Returns the property value.
+     */
+    function safeGet(object, key) {
+      if (key == '__proto__') {
+        return;
+      }
+
+      return object[key];
     }
 
     /**
@@ -47494,7 +47496,7 @@ exports = module.exports = __webpack_require__(46)(false);
 
 
 // module
-exports.push([module.i, "\n#talkerea {\n    height: 500px;\n    background-color: #CCFFFF;\n    overflow-y: scroll;\n    overflow-x: hidden;\n}\n.avatar,\n.talkbox{\n    margin: 5px;\n    padding: 5px;\n}\n.usertalk {\n    background-color: #CCFF99;\n}\n.bottalk {\n    background-color: #FFFFFF;\n}\n", ""]);
+exports.push([module.i, "\n#talkerea {\n    height: 500px;\n    background-color: #CCFFFF;\n    overflow-y: scroll;\n    overflow-x: hidden;\n}\n.avatar,\n.talkbox{\n    margin: 5px;\n    padding: 5px;\n}\n.avatar_img{\n     height: 48px;\n     width: 48px;\n}\n.usertalk {\n    background-color: #CCFF99;\n    z-index:1;\n}\n.usertalk:after {\n    content: '';\n    position: absolute;\n    display: block;\n    width: 0;\n    height: 0;\n    right: -15px;\n    top: 0px;\n    border-left: 40px solid #CCFF99;\n    border-top: 15px solid transparent;\n    border-bottom: 15px solid transparent;\n    z-index:-1;\n}\n.bottalk {\n    background-color: #FFFFFF;\n    z-index:1;\n}\n.bottalk:before {\n    content: '';\n    position: absolute;\n    display: block;\n    width: 0;\n    height: 0;\n    left: -15px;\n    border-right: 40px solid #FFFFFF;\n    border-top: 15px solid transparent;\n    border-bottom: 15px solid transparent;\n    z-index:-1;\n}\n", ""]);
 
 // exports
 
@@ -47865,13 +47867,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
-//
 
+var index = 0;
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: {
         user_id: [String, Number],
@@ -47888,7 +47885,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 bot_id: this.bot_id,
                 scenario_id: this.scenario_id,
                 contents: ''
-            }
+            },
+            speed: 400
         };
     },
     methods: {
@@ -47901,15 +47899,25 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             this.readonly = true;
             if (this.params.contents !== 'init') {
-                this.talkerea = this.talkerea + '<div class="col-6"></div>' + '<div class="col align-self-end">' + '<div class="row no-gutters">' + '<div class="col talkbox usertalk rounded">' + this.params.contents + '</div>' + '<div class="col-auto avatar">' + '<img src="' + this.user_avatar + '" height="32px" width="32px">' + '</div>' + '</div>' + '</div>';
-            }
+                this.talkerea = this.talkerea + '<div id="' + index + '" class="col-3"></div>' + '<div class="col-9 align-self-end">' + '<div class="row no-gutters">' + '<div class="col talkbox usertalk rounded">' + this.params.contents + '</div>' + '<div class="col-auto avatar">' + '<img class="avatar_img" src="' + this.user_avatar + '">' + '</div>' + '</div>' + '</div>';
 
+                var id = '#' + index;
+                var target = $(id);
+                index = index + 1;
+                var position = target.offset().top;
+                $('body,html').animate({ scrollTop: position }, this.speed, 'swing');
+            }
             this.$http.post('/api/repl', this.params).then(function (response) {
                 _this.params.contents = '';
-                _this.talkerea = _this.talkerea + '<div class="col-6 justify-content-start">' + '<div class="row no-gutters">' + '<div class="col-auto avatar">' + '<img src="' + response.data.avatarImage + '" height="32px" width="32px">' + '</div>' + '<div class="col talkbox bottalk rounded">' + response.data.systemText.expression + '</div></div></div><div class="col-6"></div>';
+                _this.talkerea = _this.talkerea + '<div id="' + index + '" class="col-9 justify-content-start">' + '<div class="row no-gutters">' + '<div class="col-auto avatar">' + '<img class="avatar_img" src="' + response.data.avatarImage + '">' + '</div>' + '<div class="col talkbox bottalk rounded">' + response.data.systemText.expression + '</div>' + '</div>' + '</div><div class="col-3"></div>';
                 _this.readonly = false;
+
+                var id = '#' + index;
+                var target = $(id);
+                index = index + 1;
+                var position = target.offset().top;
+                $('body,html').animate({ scrollTop: position }, _this.speed, 'swing');
             }).then(function () {
-                // always executed
                 this.readonly = false;
                 this.params.contents = '';
             });
@@ -47929,60 +47937,54 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "container" }, [
-    _c("div", { staticClass: "row justify-content-center" }, [
-      _c("div", { staticClass: "col-md-8" }, [
-        _c("div", { staticClass: "card" }, [
-          _c("div", { attrs: { id: "talkerea" } }, [
-            _c("div", {
-              staticClass: "row no-gutters",
-              domProps: { innerHTML: _vm._s(_vm.talkerea) }
-            })
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "row no-gutters" }, [
-            _c("div", { staticClass: "col" }, [
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.params.contents,
-                    expression: "params.contents"
-                  }
-                ],
-                staticClass: "form-control",
-                attrs: {
-                  id: "contents",
-                  type: "text",
-                  name: "contents",
-                  readonly: _vm.readonly
-                },
-                domProps: { value: _vm.params.contents },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
-                    }
-                    _vm.$set(_vm.params, "contents", $event.target.value)
-                  }
-                }
-              })
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "col-auto align-self-end" }, [
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-default",
-                  attrs: { id: "talk", disabled: _vm.readonly },
-                  on: { click: _vm.talkMessage }
-                },
-                [_vm._v("発話")]
-              )
-            ])
-          ])
-        ])
+  return _c("div", [
+    _c("div", { attrs: { id: "talkerea" } }, [
+      _c("div", {
+        staticClass: "row no-gutters",
+        domProps: { innerHTML: _vm._s(_vm.talkerea) }
+      })
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "row no-gutters" }, [
+      _c("div", { staticClass: "col" }, [
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.params.contents,
+              expression: "params.contents"
+            }
+          ],
+          staticClass: "form-control",
+          attrs: {
+            id: "contents",
+            type: "text",
+            name: "contents",
+            readonly: _vm.readonly
+          },
+          domProps: { value: _vm.params.contents },
+          on: {
+            input: function($event) {
+              if ($event.target.composing) {
+                return
+              }
+              _vm.$set(_vm.params, "contents", $event.target.value)
+            }
+          }
+        })
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "col-auto align-self-end" }, [
+        _c(
+          "button",
+          {
+            staticClass: "btn btn-default",
+            attrs: { id: "talk", disabled: _vm.readonly },
+            on: { click: _vm.talkMessage }
+          },
+          [_vm._v("発話")]
+        )
       ])
     ])
   ])
