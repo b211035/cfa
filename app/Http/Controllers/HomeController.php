@@ -50,6 +50,7 @@ class HomeController extends Controller
             'scenarios.scenario_name',
             'scenarios.times',
             'scenarios.stage_id',
+            'stages.id as stage_id',
             'stages.stage_name',
             'logs.haslog'
         )
@@ -61,8 +62,18 @@ class HomeController extends Controller
             $matrix[$Scenario->stage_id][$Scenario->times] = $Scenario;
         }
 
+        $LastScenarios = DB::table('scenarios')
+        ->join('logs', 'scenarios.id', '=', 'logs.scenario_id')
+        ->select(
+            'scenarios.id',
+            'scenarios.scenario_name'
+        )
+        ->orderBy('logs.send_date', 'desc')
+        ->first();
 
-        return view('home')->with('matrix', $matrix);
+        return view('home')
+        ->with('matrix', $matrix)
+        ->with('LastScenarios', $LastScenarios);
     }
 
     public function talk($scenarioid)
@@ -80,7 +91,7 @@ class HomeController extends Controller
         $Repluser = Repluser::where([ ['user_id', $User->id], ['bot_id', $Bot->id] ])->first();
 
         if (!$Repluser) {
-            $api_key = \Config::get('const.api_key');
+            $api_key = $Bot->api_key;
             $header = ['Content-Type: application/json', 'x-api-key: '.$api_key];
             $body = ['botId' => $Bot->bot_id];
 
@@ -105,12 +116,57 @@ class HomeController extends Controller
             ]);
         }
 
+        $Logs = $this->getLog($User, null, $Scenario->stage_id);
+
         return view('talk')
         ->with('User', $User)
         ->with('Repluser', $Repluser)
         ->with('Scenario', $Scenario)
         ->with('Bot', $Bot)
+        ->with('Logs', $Logs)
         ->with('UserAvatar', $UserAvatar);
+    }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function jsonLog(Request $request)
+    {
+        $User = Auth::user();
+
+        $Logs = $this->getLog($User, $request->input('scenario_id'), $request->input('stage_id'));
+
+        return response()->json($Logs);
+    }
+
+    public function getLog($User, $scenario_id = null, $stage_id = null){
+        $query = DB::table('logs')
+        ->join('bots', 'logs.bot_id', '=', 'bots.id')
+        ->join('scenarios', 'logs.scenario_id', '=', 'scenarios.id')
+        ->join('teacher_user_relations', 'logs.user_id', '=', 'teacher_user_relations.user_id')
+        ->join('stages', 'teacher_user_relations.teacher_id', '=', 'stages.teacher_id')
+        ->select(
+            'scenarios.scenario_name',
+            'bots.bot_name',
+            'logs.sender_flg',
+            'logs.contents',
+            'logs.send_date',
+            'logs.avater_image'
+        )
+        ->where('logs.user_id', '=', $User->id)
+        ->orderBy('logs.id', 'asc');
+
+        if ($scenario_id) {
+            $query->where('logs.scenario_id', '=', $scenario_id);
+        }
+
+        if ($stage_id) {
+            $query->where('stages.id', '=', $stage_id);
+        }
+
+        return $query->get();
     }
 
     /**
@@ -121,19 +177,24 @@ class HomeController extends Controller
     public function log($scenarioid)
     {
         $User = Auth::user();
-        $Logs = DB::table('logs')
-        ->join('bots', 'logs.bot_id', '=', 'bots.id')
-        ->join('scenarios', 'logs.scenario_id', '=', 'scenarios.id')
-        ->select(
-            'scenarios.scenario_name',
-            'bots.bot_name',
-            'logs.sender_flg',
-            'logs.contents',
-            'logs.send_date'
-        )
-        ->where('logs.user_id', '=', $User->id)
-        ->where('logs.scenario_id', '=', $scenarioid)
-        ->get();
+
+        $Logs = $this->getLog($User, $scenarioid);
+
+        return view('log')
+        ->with('User', $User)
+        ->with('Logs', $Logs);
+    }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function stageLog($stageid)
+    {
+        $User = Auth::user();
+
+        $Logs = $this->getLog($User, null, $stageid);
 
         return view('log')
         ->with('User', $User)

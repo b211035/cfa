@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Bot extends Model
+class Talktagtype extends Model
 {
     //
     public $timestamps = false;
@@ -15,7 +15,7 @@ class Bot extends Model
      * @var array
      */
     protected $fillable = [
-        'bot_id', 'bot_name', 'teacher_id', 'api_key'
+        'protcol_name', 'protcol'
     ];
 
 }

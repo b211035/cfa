@@ -19,19 +19,7 @@
                             </div>
                         @foreach ($BotAvatars as $BotAvatar)
                             <div class="row border-bottom">
-                                <div class="col">
-                                    @if ($BotAvatar->protcol == 0)
-                                    通常
-                                    @elseif ($BotAvatar->protcol == 1)
-                                    喜び
-                                    @elseif ($BotAvatar->protcol == 2)
-                                    悲しみ
-                                    @elseif ($BotAvatar->protcol == 4)
-                                    怒り
-                                    @elseif ($BotAvatar->protcol == 5)
-                                    エール
-                                    @endif
-                                </div>
+                                <div class="col">{{ $BotAvatar->protcol_name }}</div>
                                 <div class="col"> <img src="{{ route('root') }}/storage/bot/{{ $BotAvatar->filename }}"></div>
                                 <div class="col"><a href="{{ route('teacher_bot_avatar_delete', [$bot_id, $BotAvatar->id]) }}">削除</a></div>
                             </div>

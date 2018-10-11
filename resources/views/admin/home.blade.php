@@ -12,6 +12,7 @@
                         <li><a href="{{ route('admin_school') }}">学校</a></li>
                         <li><a href="{{ route('admin_teacher') }}">先生</a></li>
                         <li><a href="{{ route('admin_user') }}">ユーザー</a></li>
+                        <li><a href="{{ route('admin_talktagtype') }}">会話タグ管理</a></li>
                         <!-- <li><a href="{{ route('admin_bot') }}">ボット</a></li> -->
                         <!-- <li><a href="{{ route('admin_scenario') }}">シナリオ</a></li> -->
                     </ul>

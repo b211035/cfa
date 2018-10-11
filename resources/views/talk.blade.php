@@ -6,6 +6,7 @@
             <div class="col-md-8">
                 <div class="card">
                     <talk-component
+                        logs = '@json($Logs)'
                         user_id ="{{ $Repluser->repl_user_id }}"
                         bot_id ="{{ $Bot->bot_id }}"
                         scenario_id ="{{ $Scenario->scenario_id }}"
@@ -14,7 +15,7 @@
                     </talk-component>
                     <div>
                         <p>
-                            <a href="">戻る</a>
+                            <a href="{{ route('home') }}">戻る</a>
                         </p>
                     </div>
                 </div>

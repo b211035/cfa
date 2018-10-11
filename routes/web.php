@@ -28,6 +28,7 @@ Route::post('register', 'Auth\RegisterController@register');
 Route::get('home', 'HomeController@index')->name('home');
 Route::get('talk/{id}', 'HomeController@talk')->name('talk');
 Route::get('log/{id}', 'HomeController@log')->name('log');
+Route::get('log/stage/{id}', 'HomeController@stageLog')->name('stage_log');
 
 Route::get('profile', 'HomeController@profile')->name('profile');
 Route::get('school', 'HomeController@schoolRegistForm')->name('user_school');
@@ -80,10 +81,11 @@ Route::prefix('teacher')->group(function () {
     Route::get('user', 'Teacher\UserController@index')->name('teacher_user');
     Route::get('user/regist', 'Teacher\UserController@registForm')->name('teacher_user_regist');
     Route::post('user/regist', 'Teacher\UserController@regist');
-    Route::get('user/relation/{id}', 'Teacher\UserController@relation')->name('teacher_user_relation');
     Route::get('user/log/{id}', 'Teacher\UserController@log')->name('teacher_user_log');
     Route::get('user/log/{id}/{scenario}', 'Teacher\UserController@logScenario')->name('teacher_user_log_scenario');
     Route::get('user/log/{id}/{scenario}/download', 'Teacher\UserController@logDownload')->name('teacher_user_log_scenario_download');
+    Route::post('user/enable/{id}', 'Teacher\UserController@enable')->name('teacher_user_enable');
+    Route::post('user/disable/{id}', 'Teacher\UserController@disable')->name('disaacher_user_enable');
 
     Route::get('login', 'Teacher\LoginController@showLoginForm')->name('teacher_login');
     Route::post('login', 'Teacher\LoginController@login');
@@ -115,6 +117,12 @@ Route::prefix('admin')->group(function () {
     Route::get('school/regist', 'Admin\SchoolController@registForm')->name('admin_school_regist');
     Route::post('school/regist', 'Admin\SchoolController@regist');
     Route::get('school/delete/{id}', 'Admin\SchoolController@delete')->name('admin_school_delete');
+
+    Route::get('talktag', 'Admin\TalktagController@index')->name('admin_talktagtype');
+    Route::get('talktag/{type_id}', 'Admin\TalktagController@talktag')->name('admin_talktag');
+    Route::get('talktag/{type_id}/regist', 'Admin\TalktagController@registForm')->name('admin_talktag_regist');
+    Route::post('talktag/{type_id}/regist', 'Admin\TalktagController@regist');
+    Route::get('talktag/{type_id}/delete/{id}', 'Admin\TalktagController@delete')->name('admin_talktag_delete');
 
     Route::get('login', 'Admin\LoginController@showLoginForm')->name('admin_login');
     Route::post('login', 'Admin\LoginController@login');

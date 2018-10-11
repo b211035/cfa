@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Bot;
 use App\BotAvatar;
+use App\Talktag;
 
 class BotAvatarController extends Controller
 {
@@ -30,8 +31,15 @@ class BotAvatarController extends Controller
     public function index($bot_id)
     {
         $BotAvatars = DB::table('bot_avatars')
-        ->where('bot_id', '=', $bot_id)
-        ->orderBy('id', 'asc')
+        ->join('talktags', 'bot_avatars.protcol', '=', 'talktags.protcol')
+        ->where('bot_avatars.bot_id', '=', $bot_id)
+        ->orderBy('bot_avatars.id', 'asc')
+        ->select(
+            'bot_avatars.id',
+            'bot_avatars.filename',
+            'bot_avatars.protcol',
+            'talktags.protcol_name'
+        )
         ->get();
 
         return view('teacher.bot_avatar')
@@ -46,7 +54,12 @@ class BotAvatarController extends Controller
      */
     public function registForm(Request $request, $bot_id)
     {
+        $Talktags = DB::table('talktags')
+        ->orderBy('id', 'asc')
+        ->get();
+
         return view('teacher.bot_avatar_add')
+        ->with('Talktags', $Talktags)
         ->with('bot_id', $bot_id);
     }
 
@@ -58,7 +71,7 @@ class BotAvatarController extends Controller
     public function regist(Request $request, $bot_id)
     {
         $validatedData = $request->validate([
-            'protcol' => 'required|integer|min:0|max:5',
+            'protcol' => 'required|integer',
             'avatar' => 'required|file|image',
         ]);
 
@@ -82,7 +95,13 @@ class BotAvatarController extends Controller
     public function updateForm(Request $request, $id)
     {
         $Bot = Bot::find($id);
+
+        $Talktags = DB::table('talktags')
+        ->orderBy('id', 'asc')
+        ->get();
+
         return view('teacher.bot_avatar_add')
+        ->with('Talktags', $Talktags)
         ->with('Bot', $Bot);
     }
 

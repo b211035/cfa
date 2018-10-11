@@ -1,8 +1,35 @@
 <template>
     <div>
         <div id="talkerea">
-            <div class="row no-gutters" v-html="talkerea">
-            </div>
+                <template v-for="(log, key, count) in log_list">
+                    <div class="row no-gutters" v-if="log.sender_flg == 1">
+                        <div class="col-9 justify-content-start">
+                            <div class="row no-gutters">
+                                <div class="col-auto avatar">
+                                    <img class="avater_image" :src=log.avater_image>
+                                </div>
+                                <div class="col talkbox bottalk rounded">
+                                    <span v-html="log.contents"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3"></div>
+                    </div>
+
+                    <div class="row no-gutters" v-else>
+                        <div class="col-3"></div>
+                        <div class="col-9 align-self-end">
+                            <div class="row no-gutters">
+                                <div class="col talkbox usertalk rounded">
+                                    <span v-html="log.contents"></span>
+                                </div>
+                                <div class="col-auto avatar">
+                                    <img class="avater_image" :src=log.avater_image>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
         </div>
         <div class="row no-gutters">
             <div class="col">
@@ -16,9 +43,10 @@
 </template>
 
 <script>
-    var index = 0;
     export default {
         props: {
+            logs: [String],
+            log_list: [Object],
             user_id: [String, Number],
             bot_id: [String, Number],
             scenario_id: [String, Number],
@@ -26,6 +54,7 @@
         },
         data: function () {
             return {
+                log_list: [],
                 talkerea: '',
                 readonly: false,
                 params: {
@@ -42,123 +71,57 @@
                 if (this.params.contents.length == 0) {
                     return;
                 }
-
                 this.readonly = true;
+
                 if (this.params.contents !== 'init') {
-                    this.talkerea = this.talkerea
-                     + '<div id="' + index +'" class="col-3"></div>'
-                     + '<div class="col-9 align-self-end">'
-                         + '<div class="row no-gutters">'
-                             + '<div class="col talkbox usertalk rounded">'
-                                 + this.params.contents
-                             + '</div>'
-                             + '<div class="col-auto avatar">'
-                                 + '<img class="avatar_img" src="'
-                                 + this.user_avatar
-                                 + '">'
-                             + '</div>'
-                         + '</div>'
-                     + '</div>';
 
-                    var id = '#' + index;
-                    var target = $(id);
-                    index = index+1;
-                    var position = target.offset().top;
-                    $('body,html').animate({scrollTop:position}, this.speed, 'swing');
+                    var obj = Object.assign({}, this.log_list[0]);
+                    obj.avater_image = this.user_avatar;
+                    obj.contents = this.params.contents;
+                    obj.sender_flg = 0;
+                    this.log_list.push(obj);
 
-                    }
+                    Vue.nextTick()
+                      .then(function () {
+                            var scrollHeight = document.getElementById("talkerea").scrollHeight;
+                            document.getElementById("talkerea").scrollTop = scrollHeight;
+                      })
+
+                }
+
                 this.$http.post('/api/repl', this.params)
                     .then(
                         response =>  {
+
+                            var obj = Object.assign({}, this.log_list[0]);
+                            obj.avater_image = response.data.avatarImage;
+                            obj.contents = response.data.systemText.expression;
+                            obj.sender_flg = 1;
+                            this.log_list.push(obj);
+
+                            this.readonly = false;
                             this.params.contents = '';
-                            this.talkerea = this.talkerea
-                             + '<div id="' + index +'" class="col-9 justify-content-start">'
-                                 + '<div class="row no-gutters">'
-                                     + '<div class="col-auto avatar">'
-                                         + '<img class="avatar_img" src="'
-                                         + response.data.avatarImage
-                                         + '">'
-                                     + '</div>'
-                                 + '<div class="col talkbox bottalk rounded">'
-                                     + response.data.systemText.expression
-                                 + '</div>'
-                             + '</div>'
-                             + '</div><div class="col-3"></div>';
-                        this.readonly = false;
 
-                    var id = '#' + index;
-                    var target = $(id);
-                    index = index+1;
-                    var position = target.offset().top;
-                    $('body,html').animate({scrollTop:position}, this.speed, 'swing');
+                            Vue.nextTick()
+                              .then(function () {
+                                    var scrollHeight = document.getElementById("talkerea").scrollHeight;
+                                    document.getElementById("talkerea").scrollTop = scrollHeight;
+                              })
 
-                    })
-                    .then(function () {
-                        this.readonly = false;
-                        this.params.contents = '';
                     });
             }
         },
         mounted() {
+            this.log_list = $.parseJSON(this.logs);
+
+            Vue.nextTick()
+              .then(function () {
+                    var scrollHeight = document.getElementById("talkerea").scrollHeight;
+                    document.getElementById("talkerea").scrollTop = scrollHeight;
+              })
+
             this.params.contents = 'init';
             this.talkMessage();
         }
     }
 </script>
-
-<style type="text/css">
-    #talkerea {
-        height: 500px;
-        background-color: #CCFFFF;
-        overflow-y: scroll;
-        overflow-x: hidden;
-    }
-
-    .avatar,
-    .talkbox{
-        margin: 5px;
-        padding: 5px;
-    }
-
-    .avatar_img{
-         height: 48px;
-         width: 48px;
-    }
-
-    .usertalk {
-        background-color: #CCFF99;
-        z-index:1;
-    }
-
-    .usertalk:after {
-        content: '';
-        position: absolute;
-        display: block;
-        width: 0;
-        height: 0;
-        right: -15px;
-        top: 0px;
-        border-left: 40px solid #CCFF99;
-        border-top: 15px solid transparent;
-        border-bottom: 15px solid transparent;
-        z-index:-1;
-    }
-
-    .bottalk {
-        background-color: #FFFFFF;
-        z-index:1;
-    }
-
-    .bottalk:before {
-        content: '';
-        position: absolute;
-        display: block;
-        width: 0;
-        height: 0;
-        left: -15px;
-        border-right: 40px solid #FFFFFF;
-        border-top: 15px solid transparent;
-        border-bottom: 15px solid transparent;
-        z-index:-1;
-    }
-</style>

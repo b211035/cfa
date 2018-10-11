@@ -54,9 +54,9 @@ class BotController extends Controller
     public function regist(Request $request)
     {
         $validatedData = $request->validate([
-            'id' => 'exists:bots,id',
             'bot_id' => 'required|string|max:255',
             'bot_name' => 'required|string|max:255',
+            'api_key' => 'required|string|max:255',
         ]);
 
         $Teacher = Auth::user();
@@ -64,6 +64,7 @@ class BotController extends Controller
         $Bot = Bot::create([
             'bot_id' => $request->input('bot_id'),
             'bot_name' => $request->input('bot_name'),
+            'api_key' => $request->input('api_key'),
             'teacher_id' => $Teacher->id,
         ]);
         return redirect()->route('teacher_bot');
@@ -91,11 +92,13 @@ class BotController extends Controller
         $validatedData = $request->validate([
             'bot_id' => "required|string|max:255|unique:bots,bot_id,$id,id",
             'bot_name' => 'required|string|max:255',
+            'api_key' => 'required|string|max:255',
         ]);
 
         $Bot = Bot::find($id);
         $Bot->bot_id = $request->input('bot_id');
         $Bot->bot_name = $request->input('bot_name');
+        $Bot->api_key = $request->input('api_key');
         $Bot->save();
 
         return redirect()->route('teacher_bot');

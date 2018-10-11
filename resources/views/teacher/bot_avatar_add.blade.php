@@ -1,4 +1,4 @@
-@extends('layouts.app')
+    @extends('layouts.app')
 
 @section('content')
 <div class="container">
@@ -23,11 +23,9 @@
                                     $protcol = isset($BotAvatar) ? $BotAvatar->protcol : '';
                                 @endphp
                                 <select id="protcol" name="protcol" class="form-control{{ $errors->has('protcol') ? ' is-invalid' : '' }}" >
-                                    <option value="0" @if (0 == old('protcol', $protcol)) selected @endif>通常</option>
-                                    <option value="1" @if (1 == old('protcol', $protcol)) selected @endif>喜び</option>
-                                    <option value="2" @if (2 == old('protcol', $protcol)) selected @endif>悲しみ</option>
-                                    <option value="4" @if (4 == old('protcol', $protcol)) selected @endif>怒り</option>
-                                    <option value="5" @if (5 == old('protcol', $protcol)) selected @endif>エール</option>
+                                    @foreach ($Talktags as $Talktag)
+                                        <option value="{{ $Talktag->protcol }}" @if ( $Talktag->protcol == old('protcol', $protcol)) selected @endif>{{ $Talktag->protcol_name }}</option>
+                                    @endforeach
                                 </select>
 
                                 @if ($errors->has('protcol'))

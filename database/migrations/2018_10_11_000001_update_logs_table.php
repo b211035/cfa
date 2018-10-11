@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class ReUpdateBotsTable extends Migration
+class UpdateLogsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,8 @@ class ReUpdateBotsTable extends Migration
      */
     public function up()
     {
-        Schema::table('bots', function (Blueprint $table) {
-            $table->dropUnique('bots_bot_id_unique');
-            $table->string('api_key')->nullable($value = true);
+        Schema::table('logs', function (Blueprint $table) {
+            $table->string('avater_image')->nullable($value = true);
         });
     }
 

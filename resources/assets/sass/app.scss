@@ -12,3 +12,58 @@
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
+
+#talkerea {
+    height: 500px;
+    background-color: #CCFFFF;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.avatar,
+.talkbox{
+    margin: 5px;
+    padding: 5px;
+}
+
+.avater_image{
+     height: 48px;
+     width: 48px;
+}
+
+.usertalk {
+    background-color: #CCFF99;
+    z-index:1;
+}
+
+.usertalk:after {
+    content: '';
+    position: absolute;
+    display: block;
+    width: 0;
+    height: 0;
+    right: -15px;
+    top: 0px;
+    border-left: 40px solid #CCFF99;
+    border-top: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+    z-index:-1;
+}
+
+.bottalk {
+    background-color: #FFFFFF;
+    z-index:1;
+}
+
+.bottalk:before {
+    content: '';
+    position: absolute;
+    display: block;
+    width: 0;
+    height: 0;
+    left: -15px;
+    border-right: 40px solid #FFFFFF;
+    border-top: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+    z-index:-1;
+}

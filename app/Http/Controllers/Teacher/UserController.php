@@ -31,7 +31,14 @@ class UserController extends Controller
     public function index()
     {
         $Teacher = Auth::user();
-        $Users = DB::table('users')
+        $Users = $this->getUserList($Teacher);
+
+        return view('teacher.user')
+        ->with('Users', $Users);
+    }
+
+    public function getUserList($Teacher) {
+        return DB::table('users')
         ->leftjoin('teacher_user_relations', function ($join) {
             $Teacher = Auth::user();
             $join->on('teacher_user_relations.user_id', '=', 'users.id')
@@ -42,9 +49,48 @@ class UserController extends Controller
         ->select('users.id', 'users.user_name', 'teacher_user_relations.teacher_id')
         ->orderBy('users.id', 'asc')
         ->get();
+    }
 
-        return view('teacher.user')
-        ->with('Users', $Users);
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function enable($id)
+    {
+        $User = User::find($id);
+        $Teacher = Auth::user();
+
+        TeacherUserRelation::create([
+            'user_id' => $User->id,
+            'teacher_id' => $Teacher->id,
+        ]);
+
+        $Users = $this->getUserList($Teacher);
+        $result = ['user' => $Users];
+
+        return response()->json($result);
+    }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function disable($id)
+    {
+        $User = User::find($id);
+        $Teacher = Auth::user();
+
+        DB::table('teacher_user_relations')
+        ->where('user_id', '=', $User->id)
+        ->where('teacher_id', '=', $Teacher->id)
+        ->delete();
+
+        $Users = $this->getUserList($Teacher);
+        $result = ['user' => $Users];
+
+        return response()->json($result);
     }
 
     /**
@@ -76,24 +122,6 @@ class UserController extends Controller
             'password' => Hash::make($request->input('password')),
             'cfa_flg' => 0,
         ]);
-        $Teacher = Auth::user();
-
-        TeacherUserRelation::create([
-            'user_id' => $User->id,
-            'teacher_id' => $Teacher->id,
-        ]);
-
-        return redirect()->route('teacher_user');
-    }
-
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function relation($id)
-    {
-        $User = User::find($id);
         $Teacher = Auth::user();
 
         TeacherUserRelation::create([

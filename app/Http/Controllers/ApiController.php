@@ -26,13 +26,26 @@ class ApiController extends Controller
 
     public function repl(Request $request)
     {
-        $api_key = \Config::get('const.api_key');
 
         $Repluser = Repluser::where([ ['repl_user_id', $request->input('user_id')] ])->first();
         $Bot = Bot::where([ ['bot_id', $request->input('bot_id')] ])->first();
         $Scenario = Scenario::where([ ['scenario_id', $request->input('scenario_id')] ])->first();
 
+        $api_key = $Bot->api_key;
+
         $User = User::where([ ['id', $Repluser->user_id] ])->first();
+
+
+        $DefaultUserAvatar = DB::table('user_avatars')
+        ->where('user_id', '=', $User->id)
+        ->where('protcol', '=', '0')
+        ->first();
+
+        if ($DefaultUserAvatar) {
+            $user_image = route('root') . '/storage/user/'.$DefaultUserAvatar->filename;
+        } else {
+            $user_image = route('root') . '/storage/default_avatar.png';
+        }
 
         $contents = $request->input('contents');
         $Date = new \Datetime();
@@ -43,6 +56,7 @@ class ApiController extends Controller
                 'scenario_id' => $Scenario->id,
                 'sender_flg' => 0,
                 'contents' => $contents,
+                'avater_image' => $user_image,
                 'send_date' => $Date->format('Y-m-d H:i:s')
             ]);
         }
@@ -81,8 +95,11 @@ class ApiController extends Controller
             $result['avatarImage'] = route('root') . '/storage/default_avatar.png';
         }
 
-        if (preg_match('/\\\s\d+/u',  $result['systemText']['expression'], $matches)) {
-            $result['systemText']['expression'] = str_replace($matches[0], '', $result['systemText']['expression']);
+        $expression = $result['systemText']['expression'];
+        $expression = str_replace('\n', '<br>', $expression);
+
+        if (preg_match('/\\\s\d+/u',  $expression, $matches)) {
+            $expression = str_replace($matches[0], '', $expression);
             $protcol = str_replace('\s', '', $matches[0]);
             $BotAvatar = DB::table('bot_avatars')
             ->where('bot_id', '=', $Bot->id)
@@ -98,9 +115,13 @@ class ApiController extends Controller
             'bot_id' => $Bot->id,
             'scenario_id' => $Scenario->id,
             'sender_flg' => 1,
-            'contents' => $result['systemText']['expression'],
+            'contents' => $expression,
+            'avater_image' => $result['avatarImage'],
             'send_date' => $result['serverSendTime']
         ]);
+
+        $result['systemText']['expression_org'] = $result['systemText']['expression'];
+        $result['systemText']['expression'] = $expression;
 
         return response()->json($result);
     }

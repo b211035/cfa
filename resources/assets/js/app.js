@@ -17,6 +17,7 @@ window.Vue = require('vue');
 
 Vue.component('example-component', require('./components/ExampleComponent.vue'));
 Vue.component('talk-component', require('./components/TalkComponent.vue'));
+Vue.component('relation-component', require('./components/RelationComponent.vue'));
 Vue.prototype.$http = window.axios
 
 const app = new Vue({

@@ -16,6 +16,9 @@
                     <p>
                         <a href="{{ route('profile') }}">プロフィール設定</a>
                     </p>
+                    @if ($LastScenarios)
+                        最後に会話したシナリオは{{ $LastScenarios->scenario_name }}です
+                    @endif
 
                     @if ($matrix)
                         <div class="row border-bottom border-top">
@@ -25,6 +28,9 @@
                             <div class="row border-bottom">
                                 <div class="col">
                                     {{ $stage[1]->stage_name }}
+                                </div>
+                                <div class="col">
+                                        <a href="{{ route('stage_log', $stage[1]->stage_id) }}">ステージログ表示</a>
                                 </div>
                             </div>
                             <div class="row border-bottom">

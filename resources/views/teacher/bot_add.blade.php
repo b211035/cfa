@@ -49,6 +49,23 @@
                             </div>
                         </div>
 
+                        <div class="form-group row">
+                            <label for="api_key" class="col-md-4 col-form-label text-md-right">{{ __('API KEY') }}</label>
+
+                            <div class="col-md-6">
+                                @php
+                                    $api_key = isset($Bot) ? $Bot->api_key : '';
+                                @endphp
+                                <input id="api_key" type="text" class="form-control{{ $errors->has('api_key') ? ' is-invalid' : '' }}" name="api_key" value="{{ old('api_key', $api_key) }}" required autofocus>
+
+                                @if ($errors->has('api_key'))
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $errors->first('api_key') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
