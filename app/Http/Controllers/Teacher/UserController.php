@@ -177,7 +177,8 @@ class UserController extends Controller
             'bots.bot_name',
             'logs.sender_flg',
             'logs.contents',
-            'logs.send_date'
+            'logs.send_date',
+            'logs.avater_image'
         )
         ->where('user_id', '=', $user_id)
         ->where('scenarios.id', '=', $scenario_id)

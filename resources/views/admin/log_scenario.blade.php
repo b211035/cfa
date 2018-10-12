@@ -11,28 +11,46 @@
                     <p>
                         <a href="{{ route('admin_user_log_scenario_download', [$User->id, $scenario_id]) }}" class="btn btn-primary" target="_blank">ログダウンロード</a>
                     </p>
-                    @if ($Logs->isNotEmpty())
-                            <div class="row border-bottom border-top">
-                                <div class="col">シナリオ</div>
-                                <div class="col">発言者</div>
-                                <div class="col">発言内容</div>
-                                <div class="col">発言日時</div>
-                            </div>
-                        @foreach ($Logs as $Log)
-                            <div class="row border-bottom">
-                                <div class="col">{{ $Log->scenario_name }}</div>
-                                <div class="col">
-                                    @if ($Log->sender_flg == 1)
-                                        {{ $Log->bot_name }}
-                                    @else
-                                        {{ $User->user_name }}
-                                    @endif
-                                </div>
-                                <div class="col">{{ $Log->contents }}</div>
-                                <div class="col">{{ $Log->send_date }}</div>
-                            </div>
-                        @endforeach
-                    @endif
+                    <div id="talkerea">
+                        <div class="row no-gutters">
+                            @foreach ($Logs as $Log)
+                                <span @if ($loop->last) id="last" @endif></span>
+                                @if ($Log->sender_flg == 1)
+                                    <div class="col-9 justify-content-start">
+                                        <div class="row no-gutters">
+                                            <div class="col-auto avatar">
+                                                <img class="avater_image" src="
+                                                @if ($Log->avater_image) {{ $Log->avater_image }}
+                                                @else {{ route('root') }}/storage/default_avatar.png
+                                                @endif
+                                                ">
+                                            </div>
+                                            <div class="col talkbox bottalk rounded">
+                                                {{ $Log->contents }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-3"></div>
+                                @else
+                                    <div class="col-3"></div>
+                                    <div class="col-9 align-self-end">
+                                        <div class="row no-gutters">
+                                            <div class="col talkbox usertalk rounded">
+                                                {{ $Log->contents }}
+                                            </div>
+                                            <div class="col-auto avatar">
+                                                <img class="avater_image" src="
+                                                @if ($Log->avater_image) {{ $Log->avater_image }}
+                                                @else {{ route('root') }}/storage/default_avatar.png
+                                                @endif
+                                                ">
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
 
                     <a href="{{ route('admin_user_log', $User->id)  }}">戻る</a>
                 </div>
