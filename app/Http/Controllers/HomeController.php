@@ -145,7 +145,7 @@ class HomeController extends Controller
         $query = DB::table('logs')
         ->join('bots', 'logs.bot_id', '=', 'bots.id')
         ->join('scenarios', 'logs.scenario_id', '=', 'scenarios.id')
-        ->join('stages', 'scenarios.scenario_id', '=', 'stages.id')
+        ->join('stages', 'scenarios.stage_id', '=', 'stages.id')
         ->select(
             'scenarios.scenario_name',
             'bots.bot_name',
