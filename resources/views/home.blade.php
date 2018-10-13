@@ -13,18 +13,16 @@
                             {{ session('status') }}
                         </div>
                     @endif
-                    <p>
-                        <a href="{{ route('user_avatar') }}">アバター設定</a>
-                    </p>
+
 
                     @if ($matrix)
                         <div class="row border-bottom border-top">
-                            シナリオ選択
+                            <p class="home_t">シナリオ選択</p>
                         </div>
                         @foreach ($matrix as $stage)
                             <div class="row border-bottom">
                                 <div class="col">
-                                    {{ $stage[1]->stage_name }}
+                                    <p class="stage">{{ $stage[1]->stage_name }}</p>
                                 </div>
                             </div>
                             <div class="row border-bottom">
@@ -32,9 +30,9 @@
                                 <div class="col-3">
                                     @if (isset($stage[$i]))
                                         @if ($stage[$i]->haslog > 1)
-                                        <a href="{{ route('log', $stage[$i]->id) }}">{{ $stage[$i]->scenario_name }}</a>
+					<a href="{{ route('log', $stage[$i]->id) }}" class="scenario_name">{{ $stage[$i]->scenario_name }}</a>
                                         @else
-                                        <a href="{{ route('talk', $stage[$i]->id) }}">{{ $stage[$i]->scenario_name }}</a>
+					<a href="{{ route('talk', $stage[$i]->id) }}" class="scenario_name">{{ $stage[$i]->scenario_name }}</a>
                                         @endif
                                     @endif
                                 </div>
@@ -42,7 +40,11 @@
                             </div>
                         @endforeach
                     @endif
+
                 </div>
+                    <p>
+                        <a href="{{ route('user_avatar') }}">アバター設定</a>
+                    </p>
             </div>
         </div>
     </div>

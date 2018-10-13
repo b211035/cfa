@@ -5,5 +5,56 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
 
+.scenario_name{
+    width: 105%;
+    background-image: url("../images/scenario_title_sample2.png");
+    background-size:auto 100%; 
+    display: inline-block;
+    padding: 0.5em 1em;
+    padding-left: 30%;
+    text-decoration: none;
+    font-weight: bold;
+}
+.scenario_name:hover {
+    background-image: url("../images/scenario_title_sample1.png");
+}
+.stage{
+color: #505050;/*文字色*/
+padding: 0.5em;/*文字周りの余白*/
+display: inline-block;/*おまじない*/
+line-height: 1.3;/*行高*/
+background: #dbebf8;/*背景色*/
+vertical-align: middle;/*上下中央*/
+border-radius: 25px 0px 0px 25px;/*左側の角を丸く*/
+margin-left: -23px;
+}
+
+.stage:before {
+content: '●';
+color: white;
+margin-right: 8px;
+}
+
+.home_t{
+    position: relative;
+    padding: 5px 5px 5px 42px;
+    background: #77c3df;
+    font-size: 20px;
+    color: white;
+    margin-left: -2%;
+    line-height: 1.3;
+    z-index:0;
+    width:160%;
+}
+home_t:before {
+position: absolute;
+content: '';
+left: -2px;
+top: -2px;
+border: none;
+border-left: solid 40px white;
+border-bottom: solid 79px transparent;
+z-index:-2
+}
 
 
