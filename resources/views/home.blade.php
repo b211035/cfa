@@ -38,7 +38,7 @@
                                     @for ($i = 1; $i < 5; $i++)
                                     <div class="col-3">
                                         @if (isset($Stage->matrix[$i]))
-                                            @if ($Stage->matrix[$i]->haslog > 1)
+                                            @if ($Stage->matrix[$i]->haslog)
                                             <a href="{{ route('log', $Stage->matrix[$i]->id) }}">{{ $Stage->matrix[$i]->scenario_name }}</a>
                                             @else
                                             <a href="{{ route('talk', $Stage->matrix[$i]->id) }}">{{ $Stage->matrix[$i]->scenario_name }}</a>

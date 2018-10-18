@@ -10,6 +10,7 @@ use App\Bot;
 use App\Repluser;
 use App\School;
 use App\Stage;
+use App\Log;
 
 class HomeController extends Controller
 {
@@ -31,6 +32,7 @@ class HomeController extends Controller
     public function index()
     {
         $User = Auth::user();
+
         $Stages = Stage::with('Scenarios')
         ->join('teacher_user_relations', 'teacher_user_relations.teacher_id', '=', 'stages.teacher_id')
         ->where('teacher_user_relations.user_id', '=', $User->id)
@@ -43,11 +45,11 @@ class HomeController extends Controller
         foreach ($Stages as $Stage) {
             $matrix =  [];
             foreach ($Stage->Scenarios as $Scenario) {
+                $Scenario->haslog = DB::table('logs')->where('user_id', $User->id)->where('scenario_id', $Scenario->id)->exists();
                 $matrix[$Scenario->times] = $Scenario;
             }
-            $Stage->matrix =  $matrix;
+            $Stage->matrix = $matrix;
         }
-
 
         $LastScenarios = Scenario::join('logs', 'scenarios.id', '=', 'logs.scenario_id')
         ->select(
