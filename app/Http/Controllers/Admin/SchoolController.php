@@ -68,7 +68,8 @@ class SchoolController extends Controller
      */
     public function delete($id)
     {
-        DB::table('schools')->where('id', '=', $id)->delete();
+        $School = School::find($id);
+        $School->delete();
         return redirect()->route('admin_school');
     }
 }

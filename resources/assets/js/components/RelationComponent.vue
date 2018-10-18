@@ -5,6 +5,7 @@
             <div class="col">生徒名</div>
             <div class="col"></div>
             <div class="col"></div>
+            <div class="col"></div>
         </div>
         <div>
             <template v-for="user in user_list">
@@ -20,6 +21,7 @@
                         </div>
                     </div>
                     <div class="col"><a href="#" @click="log(user.id)">会話ログ確認</a></div>
+                    <div class="col"><a href="#" @click="deluser(user.id)">削除</a></div>
                 </div>
             </template>
         </div>
@@ -50,6 +52,14 @@
             },
             disable: function(id){
                 this.$http.post('/teacher/user/disable/' + id)
+                    .then(
+                        response =>  {
+                            this.user_list = response.data.user;
+                        }
+                    );
+            },
+            deluser: function(id){
+                this.$http.post('/teacher/user/delete/' + id)
                     .then(
                         response =>  {
                             this.user_list = response.data.user;

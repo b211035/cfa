@@ -18,4 +18,8 @@ class Talktag extends Model
         'talktagtype_id', 'protcol_name', 'protcol'
     ];
 
+    public function Talktagtype()
+    {
+        return $this->belongsTo('App\Talktagtype');
+    }
 }

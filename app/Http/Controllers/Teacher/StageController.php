@@ -30,10 +30,8 @@ class StageController extends Controller
     {
 
         $Teacher = Auth::user();
-        $Stages = DB::table('stages')
-        ->where('teacher_id', '=', $Teacher->id)
-        ->orderBy('id', 'asc')
-        ->get();
+
+        $Stages = $Teacher->Stages;
 
         return view('teacher.stage')
         ->with('Stages', $Stages);
@@ -106,7 +104,8 @@ class StageController extends Controller
      */
     public function delete($id)
     {
-        DB::table('stages')->where('id', '=', $id)->delete();
+        $Stage = Stage::find($id);
+        $Stage->delete();
         return redirect()->route('teacher_stage');
     }
 

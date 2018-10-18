@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Response;
 use App\User;
-use App\TeacherUserRelation;
+use App\Scenario;
+use App\Log;
 
 class UserController extends Controller
 {
@@ -38,8 +39,7 @@ class UserController extends Controller
     }
 
     public function getUserList($Teacher) {
-        return DB::table('users')
-        ->leftjoin('teacher_user_relations', function ($join) {
+        return User::leftjoin('teacher_user_relations', function ($join) {
             $Teacher = Auth::user();
             $join->on('teacher_user_relations.user_id', '=', 'users.id')
                 ->where('teacher_user_relations.teacher_id', '=', $Teacher->id);
@@ -58,13 +58,9 @@ class UserController extends Controller
      */
     public function enable($id)
     {
-        $User = User::find($id);
         $Teacher = Auth::user();
 
-        TeacherUserRelation::create([
-            'user_id' => $User->id,
-            'teacher_id' => $Teacher->id,
-        ]);
+        $Teacher->Users()->attach($id);
 
         $Users = $this->getUserList($Teacher);
         $result = ['user' => $Users];
@@ -79,13 +75,29 @@ class UserController extends Controller
      */
     public function disable($id)
     {
-        $User = User::find($id);
         $Teacher = Auth::user();
 
-        DB::table('teacher_user_relations')
-        ->where('user_id', '=', $User->id)
-        ->where('teacher_id', '=', $Teacher->id)
-        ->delete();
+        $Teacher->Users()->detach($id);
+
+        $Users = $this->getUserList($Teacher);
+        $result = ['user' => $Users];
+
+        return response()->json($result);
+    }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function delete($id)
+    {
+        $Teacher = Auth::user();
+
+        $User = User::find($id);
+        $User->login_id = uniqid('deleted_', true);
+        $User->save();
+        $User->delete();
 
         $Users = $this->getUserList($Teacher);
         $result = ['user' => $Users];
@@ -116,18 +128,16 @@ class UserController extends Controller
             'password' => 'required|string|min:6|confirmed',
         ]);
 
+        $Teacher = Auth::user();
         $User = User::create([
             'login_id' => $request->input('login_id'),
             'user_name' => $request->input('user_name'),
             'password' => Hash::make($request->input('password')),
             'cfa_flg' => 0,
+            'school_id' => $Teacher->school_id,
         ]);
-        $Teacher = Auth::user();
 
-        TeacherUserRelation::create([
-            'user_id' => $User->id,
-            'teacher_id' => $Teacher->id,
-        ]);
+        $Teacher->Users()->attach($User->id);
 
         return redirect()->route('teacher_user');
     }
@@ -140,15 +150,8 @@ class UserController extends Controller
     public function log($id)
     {
         $User = User::find($id);
-        $Logs = DB::table('logs')
-        ->where('user_id', '=', $id)
-        ->select('scenario_id')
-        ->groupBy('scenario_id')
-        ->get();
 
-
-        $Scenarios = DB::table('scenarios')
-        ->whereIn('id',
+        $Scenarios = Scenario::whereIn('id',
             DB::table('logs')
             ->where('user_id', '=', $id)
             ->select('scenario_id')
@@ -169,8 +172,7 @@ class UserController extends Controller
     public function logScenario($user_id, $scenario_id)
     {
         $User = User::find($user_id);
-        $Logs = DB::table('logs')
-        ->join('bots', 'logs.bot_id', '=', 'bots.id')
+        $Logs = Log::join('bots', 'logs.bot_id', '=', 'bots.id')
         ->join('scenarios', 'logs.scenario_id', '=', 'scenarios.id')
         ->select(
             'scenarios.scenario_name',
@@ -197,8 +199,7 @@ class UserController extends Controller
      */
     public function logDownload($user_id, $scenario_id)
     {
-        $query = DB::table('logs')
-        ->join('bots', 'logs.bot_id', '=', 'bots.id')
+        $query = Log::join('bots', 'logs.bot_id', '=', 'bots.id')
         ->join('scenarios', 'logs.scenario_id', '=', 'scenarios.id')
         ->join('users', 'logs.user_id', '=', 'users.id')
         ->select(

@@ -18,4 +18,8 @@ class UserAvatar extends Model
         'user_id', 'filename', 'protcol'
     ];
 
+    public function User()
+    {
+        return $this->belongsTo('App\User');
+    }
 }

@@ -30,8 +30,7 @@ class BotAvatarController extends Controller
      */
     public function index($bot_id)
     {
-        $BotAvatars = DB::table('bot_avatars')
-        ->join('talktags', 'bot_avatars.protcol', '=', 'talktags.protcol')
+        $BotAvatars = BotAvatar::join('talktags', 'bot_avatars.protcol', '=', 'talktags.protcol')
         ->where('bot_avatars.bot_id', '=', $bot_id)
         ->orderBy('bot_avatars.id', 'asc')
         ->select(
@@ -54,9 +53,7 @@ class BotAvatarController extends Controller
      */
     public function registForm(Request $request, $bot_id)
     {
-        $Talktags = DB::table('talktags')
-        ->orderBy('id', 'asc')
-        ->get();
+        $Talktags = Talktag::all();
 
         return view('teacher.bot_avatar_add')
         ->with('Talktags', $Talktags)
@@ -71,7 +68,7 @@ class BotAvatarController extends Controller
     public function regist(Request $request, $bot_id)
     {
         $validatedData = $request->validate([
-            'protcol' => 'required|integer',
+            'protcol' => 'required|string',
             'avatar' => 'required|file|image',
         ]);
 
@@ -96,9 +93,7 @@ class BotAvatarController extends Controller
     {
         $Bot = Bot::find($id);
 
-        $Talktags = DB::table('talktags')
-        ->orderBy('id', 'asc')
-        ->get();
+        $Talktags = Talktag::all();
 
         return view('teacher.bot_avatar_add')
         ->with('Talktags', $Talktags)
@@ -135,7 +130,7 @@ class BotAvatarController extends Controller
         $BotAvatar = BotAvatar::find($avatar_id);
         Storage::delete('public/bot/'.$BotAvatar->filename);
 
-        DB::table('bot_avatars')->where('id', '=', $avatar_id)->delete();
+        $BotAvatar->delete();
         return redirect()->route('teacher_bot_avatar', $bot_id);
     }
 }

@@ -30,10 +30,7 @@ class UserAvatarController extends Controller
     public function index()
     {
         $User = Auth::user();
-        $UserAvatar = DB::table('user_avatars')
-        ->where('user_id', '=', $User->id)
-        ->orderBy('id', 'asc')
-        ->first();
+        $UserAvatar = $User->Avatar;
 
         return view('user_avatar')
         ->with('UserAvatar', $UserAvatar);
@@ -58,7 +55,6 @@ class UserAvatarController extends Controller
     {
         $User = Auth::user();
         $validatedData = $request->validate([
-            // 'protcol' => 'required|integer|min:0|max:2',
             'avatar' => 'required|file|image',
         ]);
 
@@ -81,9 +77,7 @@ class UserAvatarController extends Controller
      */
     public function updateForm(Request $request, $id)
     {
-        $Bot = Bot::find($id);
-        return view('user_avatar_add')
-        ->with('Bot', $Bot);
+        return view('user_avatar_add');
     }
 
     /**
@@ -116,7 +110,7 @@ class UserAvatarController extends Controller
         $UserAvatar = UserAvatar::find($avatar_id);
         Storage::delete('public/user/'.$UserAvatar->filename);
 
-        DB::table('user_avatars')->where('id', '=', $avatar_id)->delete();
+        $UserAvatar->delete();
         return redirect()->route('user_avatar');
     }
 }

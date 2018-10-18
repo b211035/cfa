@@ -18,4 +18,8 @@ class Talktagtype extends Model
         'protcol_name', 'protcol'
     ];
 
+    public function Talktags()
+    {
+        return $this->hasMany('App\Talktag');
+    }
 }

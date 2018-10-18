@@ -43,10 +43,7 @@ class TalktagController extends Controller
     {
         $Talktagtype = Talktagtype::find($type_id);
 
-        $Talktags = DB::table('talktags')
-        ->where('talktagtype_id', '=', $type_id)
-        ->orderBy('id', 'asc')
-        ->get();
+        $Talktags = $Talktagtype->Talktags;
 
         return view('admin.talktag')
         ->with('Talktagtype', $Talktagtype)
@@ -94,7 +91,8 @@ class TalktagController extends Controller
      */
     public function delete($type_id, $id)
     {
-        DB::table('talktags')->where('id', '=', $id)->delete();
+        $Talktag = Talktag::find($id);
+        $Talktag->delete();
         return redirect()->route('admin_talktag', $type_id);
     }
 }

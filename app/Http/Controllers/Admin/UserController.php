@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Response;
 use App\User;
-use App\TeacherUserRelation;
+use App\Scenario;
+use App\Log;
 
 class UserController extends Controller
 {
@@ -29,10 +30,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $Users = DB::table('users')
-        ->select('users.id', 'users.user_name')
-        ->orderBy('users.id', 'asc')
-        ->get();
+        $Users = User::all();
 
         return view('admin.user')
         ->with('Users', $Users);
@@ -46,15 +44,8 @@ class UserController extends Controller
     public function log($id)
     {
         $User = User::find($id);
-        $Logs = DB::table('logs')
-        ->where('user_id', '=', $id)
-        ->select('scenario_id')
-        ->groupBy('scenario_id')
-        ->get();
 
-
-        $Scenarios = DB::table('scenarios')
-        ->whereIn('id',
+        $Scenarios = Scenario::whereIn('id',
             DB::table('logs')
             ->where('user_id', '=', $id)
             ->select('scenario_id')
@@ -75,9 +66,16 @@ class UserController extends Controller
     public function logScenario($user_id, $scenario_id)
     {
         $User = User::find($user_id);
-        $Logs = DB::table('logs')
-        ->join('bots', 'logs.bot_id', '=', 'bots.id')
+        $Logs = Log::join('bots', 'logs.bot_id', '=', 'bots.id')
         ->join('scenarios', 'logs.scenario_id', '=', 'scenarios.id')
+        ->select(
+            'scenarios.scenario_name',
+            'bots.bot_name',
+            'logs.sender_flg',
+            'logs.contents',
+            'logs.send_date',
+            'logs.avater_image'
+        )
         ->where('user_id', '=', $user_id)
         ->where('scenarios.id', '=', $scenario_id)
         ->get();
@@ -95,8 +93,7 @@ class UserController extends Controller
      */
     public function logDownload($user_id, $scenario_id)
     {
-        $query = DB::table('logs')
-        ->join('bots', 'logs.bot_id', '=', 'bots.id')
+        $query = Log::join('bots', 'logs.bot_id', '=', 'bots.id')
         ->join('scenarios', 'logs.scenario_id', '=', 'scenarios.id')
         ->join('users', 'logs.user_id', '=', 'users.id')
         ->select(
@@ -132,5 +129,19 @@ class UserController extends Controller
             'Content-Disposition' => 'attachment; filename="log.csv"',
         );
         return Response::make($csv, 200, $headers);
+    }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function delete($id)
+    {
+        $User = User::find($id);
+        $User->login_id = uniqid('deleted_', true);
+        $User->save();
+        $User->delete();
+        return redirect()->route('admin_user');
     }
 }

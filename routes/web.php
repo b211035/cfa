@@ -86,6 +86,7 @@ Route::prefix('teacher')->group(function () {
     Route::get('user/log/{id}/{scenario}/download', 'Teacher\UserController@logDownload')->name('teacher_user_log_scenario_download');
     Route::post('user/enable/{id}', 'Teacher\UserController@enable')->name('teacher_user_enable');
     Route::post('user/disable/{id}', 'Teacher\UserController@disable')->name('disaacher_user_enable');
+    Route::post('user/delete/{id}', 'Teacher\UserController@delete')->name('teacher_user_delete');
 
     Route::get('login', 'Teacher\LoginController@showLoginForm')->name('teacher_login');
     Route::post('login', 'Teacher\LoginController@login');
@@ -95,18 +96,11 @@ Route::prefix('teacher')->group(function () {
 Route::prefix('admin')->group(function () {
     Route::get('/', 'Admin\AdminController@index')->name('admin_home');
 
-    Route::get('bot', 'Admin\AdminController@bot')->name('admin_bot');
-    Route::post('bot', 'Admin\AdminController@botRegist');
-    Route::get('bot/delete/{id}', 'Admin\AdminController@botDelete')->name('admin_bot_delete');
-
-    Route::get('scenario', 'Admin\AdminController@scenario')->name('admin_scenario');
-    Route::post('scenario', 'Admin\AdminController@scenarioRegist');
-    Route::get('scenario/delete/{id}', 'Admin\AdminController@scenarioDelete')->name('admin_scenario_delete');
-
     Route::get('user', 'Admin\UserController@index')->name('admin_user');
     Route::get('user/log/{id}', 'Admin\UserController@log')->name('admin_user_log');
     Route::get('user/log/{id}/{scenario}', 'Admin\UserController@logScenario')->name('admin_user_log_scenario');
     Route::get('user/log/{id}/{scenario}/download', 'Admin\UserController@logDownload')->name('admin_user_log_scenario_download');
+    Route::get('user/delete/{id}', 'Admin\UserController@delete')->name('admin_user_delete');
 
     Route::get('teacher', 'Admin\TeacherController@index')->name('admin_teacher');
     Route::get('teacher/regist', 'Admin\TeacherController@registForm')->name('admin_teacher_regist');

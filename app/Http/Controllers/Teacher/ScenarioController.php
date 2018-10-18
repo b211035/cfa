@@ -31,18 +31,7 @@ class ScenarioController extends Controller
     {
         $Teacher = Auth::user();
 
-        $Scenarios = DB::table('scenarios')
-        ->join('stages', 'scenarios.stage_id', '=', 'stages.id')
-        ->select(
-            'scenarios.id',
-            'scenarios.scenario_id',
-            'scenarios.scenario_name',
-            'scenarios.times',
-            'stages.stage_name'
-        )
-        ->where('scenarios.teacher_id', '=', $Teacher->id)
-        ->orderBy('scenarios.id', 'asc')
-        ->get();
+        $Scenarios = $Teacher->Scenarios;
 
         return view('teacher.scenario')
         ->with('Scenarios', $Scenarios);
@@ -56,15 +45,10 @@ class ScenarioController extends Controller
     public function registForm(Request $request)
     {
         $Teacher = Auth::user();
-        $Bots = DB::table('bots')
-        ->where('teacher_id', '=', $Teacher->id)
-        ->orderBy('id', 'asc')
-        ->get();
 
-        $Stages = DB::table('stages')
-        ->where('teacher_id', '=', $Teacher->id)
-        ->orderBy('id', 'asc')
-        ->get();
+        $Bots = $Teacher->Bots;
+
+        $Stages = $Teacher->Stages;
 
         return view('teacher.scenario_add')
         ->with('Bots', $Bots)
@@ -80,7 +64,7 @@ class ScenarioController extends Controller
     {
         $Teacher = Auth::user();
         $validatedData = $request->validate([
-            'scenario_id' => 'unique:scenarios|required|string|max:255',
+            'scenario_id' => 'required|string|max:255',
             'scenario_name' => 'required|string|max:255',
             'bot_id' => 'required|exists:bots,id',
             'stage_id' => 'required|exists:stages,id',
@@ -107,15 +91,10 @@ class ScenarioController extends Controller
     public function updateForm(Request $request, $id)
     {
         $Teacher = Auth::user();
-        $Bots = DB::table('bots')
-        ->where('teacher_id', '=', $Teacher->id)
-        ->orderBy('id', 'asc')
-        ->get();
 
-        $Stages = DB::table('stages')
-        ->where('teacher_id', '=', $Teacher->id)
-        ->orderBy('id', 'asc')
-        ->get();
+        $Bots = $Teacher->Bots;
+
+        $Stages = $Teacher->Stages;
 
         $Scenario = Scenario::find($id);
         return view('teacher.scenario_add')
@@ -132,7 +111,7 @@ class ScenarioController extends Controller
     public function update(Request $request, $id)
     {
         $validatedData = $request->validate([
-            'scenario_id' => "required|string|max:255|unique:scenarios,scenario_id,$id,id",
+            'scenario_id' => "required|string|max:255",
             'scenario_name' => 'required|string|max:255',
             'bot_id' => 'required|exists:bots,id',
             'stage_id' => 'required|exists:stages,id',
@@ -157,7 +136,8 @@ class ScenarioController extends Controller
      */
     public function delete($id)
     {
-        DB::table('scenarios')->where('id', '=', $id)->delete();
+        $Scenario = Scenario::find($id);
+        $Scenario->delete();
         return redirect()->route('teacher_scenario');
     }
 }

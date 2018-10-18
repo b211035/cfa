@@ -47791,6 +47791,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: {
@@ -47817,6 +47819,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             this.$http.post('/teacher/user/disable/' + id).then(function (response) {
                 _this2.user_list = response.data.user;
+            });
+        },
+        deluser: function deluser(id) {
+            var _this3 = this;
+
+            this.$http.post('/teacher/user/delete/' + id).then(function (response) {
+                _this3.user_list = response.data.user;
             });
         },
         log: function log(id) {
@@ -47897,6 +47906,21 @@ var render = function() {
                       },
                       [_vm._v("会話ログ確認")]
                     )
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col" }, [
+                    _c(
+                      "a",
+                      {
+                        attrs: { href: "#" },
+                        on: {
+                          click: function($event) {
+                            _vm.deluser(user.id)
+                          }
+                        }
+                      },
+                      [_vm._v("削除")]
+                    )
                   ])
                 ])
               ]
@@ -47916,6 +47940,8 @@ var staticRenderFns = [
       _c("div", { staticClass: "col" }, [_vm._v("ID")]),
       _vm._v(" "),
       _c("div", { staticClass: "col" }, [_vm._v("生徒名")]),
+      _vm._v(" "),
+      _c("div", { staticClass: "col" }),
       _vm._v(" "),
       _c("div", { staticClass: "col" }),
       _vm._v(" "),

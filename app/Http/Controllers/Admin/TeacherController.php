@@ -72,7 +72,8 @@ class TeacherController extends Controller
      */
     public function delete($id)
     {
-        DB::table('teachers')->where('id', '=', $id)->delete();
+        $Teacher = Teacher::find($id);
+        $Teacher->delete();
         return redirect()->route('admin_teacher');
     }
 }

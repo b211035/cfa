@@ -28,13 +28,24 @@ class ApiController extends Controller
     {
 
         $Repluser = Repluser::where([ ['repl_user_id', $request->input('user_id')] ])->first();
-        $Bot = Bot::where([ ['bot_id', $request->input('bot_id')] ])->first();
-        $Scenario = Scenario::where([ ['scenario_id', $request->input('scenario_id')] ])->first();
-
-        $api_key = $Bot->api_key;
-
         $User = User::where([ ['id', $Repluser->user_id] ])->first();
 
+        $BotAndScenario = DB::table('scenarios')
+        ->join('bots', 'scenarios.bot_id', '=', 'bots.id')
+        ->join('teacher_user_relations', 'scenarios.teacher_id', '=', 'teacher_user_relations.teacher_id')
+        ->where('teacher_user_relations.user_id', '=', $User->id)
+        ->where('bots.bot_id', '=', $request->input('bot_id'))
+        ->where('scenarios.scenario_id', '=', $request->input('scenario_id'))
+        ->select(
+            'scenarios.id as sid',
+            'scenarios.scenario_id',
+            'bots.id as bid',
+            'bots.bot_id',
+            'bots.api_key'
+        )
+        ->first();
+
+        $api_key = $BotAndScenario->api_key;
 
         $DefaultUserAvatar = DB::table('user_avatars')
         ->where('user_id', '=', $User->id)
@@ -52,8 +63,8 @@ class ApiController extends Controller
         if ($contents != 'init') {
             Log::create([
                 'user_id' => $User->id,
-                'bot_id' => $Bot->id,
-                'scenario_id' => $Scenario->id,
+                'bot_id' => $BotAndScenario->bid,
+                'scenario_id' => $BotAndScenario->sid,
                 'sender_flg' => 0,
                 'contents' => $contents,
                 'avater_image' => $user_image,
@@ -64,10 +75,10 @@ class ApiController extends Controller
         $header = ['Content-Type: application/json', 'x-api-key: '.$api_key];
         $body = [
             'appUserId' => $Repluser->repl_user_id,
-            'botId' => $Bot->bot_id,
+            'botId' => $BotAndScenario->bot_id,
             'voiceText' => $contents,
             'initTalkingFlag' => ($contents == 'init') ?? true || false,
-            'initTopicId' => $Scenario->scenario_id,
+            'initTopicId' => $BotAndScenario->scenario_id,
         ];
 
         $option = [
@@ -85,7 +96,7 @@ class ApiController extends Controller
         curl_close($curl);
 
         $DefaultAvatar = DB::table('bot_avatars')
-        ->where('bot_id', '=', $Bot->id)
+        ->where('bot_id', '=', $BotAndScenario->bid)
         ->where('protcol', '=', '0')
         ->first();
 
@@ -102,7 +113,7 @@ class ApiController extends Controller
             $expression = str_replace($matches[0], '', $expression);
             $protcol = str_replace('\s', '', $matches[0]);
             $BotAvatar = DB::table('bot_avatars')
-            ->where('bot_id', '=', $Bot->id)
+            ->where('bot_id', '=', $BotAndScenario->bid)
             ->where('protcol', '=', (int)$protcol)
             ->first();
             if ($BotAvatar) {
@@ -112,8 +123,8 @@ class ApiController extends Controller
 
         Log::create([
             'user_id' => $User->id,
-            'bot_id' => $Bot->id,
-            'scenario_id' => $Scenario->id,
+            'bot_id' => $BotAndScenario->bid,
+            'scenario_id' => $BotAndScenario->sid,
             'sender_flg' => 1,
             'contents' => $expression,
             'avater_image' => $result['avatarImage'],

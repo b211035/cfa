@@ -20,32 +20,34 @@
                         最後に会話したシナリオは{{ $LastScenarios->scenario_name }}です
                     @endif
 
-                    @if ($matrix)
+                    @if ($Stages->isNotEmpty())
                         <div class="row border-bottom border-top">
                             シナリオ選択
                         </div>
-                        @foreach ($matrix as $stage)
-                            <div class="row border-bottom">
-                                <div class="col">
-                                    {{ $stage[1]->stage_name }}
+                        @foreach ($Stages as $Stage)
+                            @if ($Stage->matrix)
+                                <div class="row border-bottom">
+                                    <div class="col">
+                                        {{ $Stage->stage_name }}
+                                    </div>
+                                    <div class="col">
+                                            <a href="{{ route('stage_log', $Stage->id) }}">ステージログ表示</a>
+                                    </div>
                                 </div>
-                                <div class="col">
-                                        <a href="{{ route('stage_log', $stage[1]->stage_id) }}">ステージログ表示</a>
-                                </div>
-                            </div>
-                            <div class="row border-bottom">
-                                @for ($i = 1; $i < 5; $i++)
-                                <div class="col-3">
-                                    @if (isset($stage[$i]))
-                                        @if ($stage[$i]->haslog > 1)
-                                        <a href="{{ route('log', $stage[$i]->id) }}">{{ $stage[$i]->scenario_name }}</a>
-                                        @else
-                                        <a href="{{ route('talk', $stage[$i]->id) }}">{{ $stage[$i]->scenario_name }}</a>
+                                <div class="row border-bottom">
+                                    @for ($i = 1; $i < 5; $i++)
+                                    <div class="col-3">
+                                        @if (isset($Stage->matrix[$i]))
+                                            @if ($Stage->matrix[$i]->haslog > 1)
+                                            <a href="{{ route('log', $Stage->matrix[$i]->id) }}">{{ $Stage->matrix[$i]->scenario_name }}</a>
+                                            @else
+                                            <a href="{{ route('talk', $Stage->matrix[$i]->id) }}">{{ $Stage->matrix[$i]->scenario_name }}</a>
+                                            @endif
                                         @endif
-                                    @endif
+                                    </div>
+                                    @endfor
                                 </div>
-                                @endfor
-                            </div>
+                            @endif
                         @endforeach
                     @endif
                 </div>

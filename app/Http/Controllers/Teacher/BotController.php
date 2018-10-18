@@ -28,10 +28,8 @@ class BotController extends Controller
     public function index()
     {
         $Teacher = Auth::user();
-        $Bots = DB::table('bots')
-        ->where('teacher_id', '=', $Teacher->id)
-        ->orderBy('id', 'asc')
-        ->get();
+
+        $Bots = $Teacher->Bots;
 
         return view('teacher.bot')->with('Bots', $Bots);
     }
@@ -90,7 +88,7 @@ class BotController extends Controller
     public function update(Request $request, $id)
     {
         $validatedData = $request->validate([
-            'bot_id' => "required|string|max:255|unique:bots,bot_id,$id,id",
+            'bot_id' => "required|string|max:255",
             'bot_name' => 'required|string|max:255',
             'api_key' => 'required|string|max:255',
         ]);
@@ -111,7 +109,8 @@ class BotController extends Controller
      */
     public function delete($id)
     {
-        DB::table('bots')->where('id', '=', $id)->delete();
+        $Bot = Bot::find($id);
+        $Bot->delete();
         return redirect()->route('teacher_bot');
     }
 }

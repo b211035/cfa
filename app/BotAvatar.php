@@ -18,4 +18,8 @@ class BotAvatar extends Model
         'bot_id', 'filename', 'protcol'
     ];
 
+    public function Teacher()
+    {
+        return $this->belongsTo('App\Teacher');
+    }
 }

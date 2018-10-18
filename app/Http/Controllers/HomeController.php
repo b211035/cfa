@@ -9,6 +9,7 @@ use App\Scenario;
 use App\Bot;
 use App\Repluser;
 use App\School;
+use App\Stage;
 
 class HomeController extends Controller
 {
@@ -30,40 +31,25 @@ class HomeController extends Controller
     public function index()
     {
         $User = Auth::user();
-        $subquery = DB::table('logs')
-           ->select(DB::raw('scenario_id, count(*) as haslog'))
-           ->where('user_id', '=', $User->id)
-           ->groupBy('scenario_id');
-
-        $Scenarios = DB::table('scenarios')
-        ->join('stages', 'scenarios.stage_id', '=', 'stages.id')
-        ->join('teacher_user_relations', function ($join) {
-            $User = Auth::user();
-            $join->on('teacher_user_relations.teacher_id', '=', 'stages.teacher_id')
-                ->where('teacher_user_relations.user_id', '=', $User->id);
-        })
-        ->leftJoinSub($subquery, 'logs', function($join) {
-            $join->on('logs.scenario_id', '=', 'scenarios.id');
-        })
+        $Stages = Stage::with('Scenarios')
+        ->join('teacher_user_relations', 'teacher_user_relations.teacher_id', '=', 'stages.teacher_id')
+        ->where('teacher_user_relations.user_id', '=', $User->id)
         ->select(
-            'scenarios.id',
-            'scenarios.scenario_name',
-            'scenarios.times',
-            'scenarios.stage_id',
-            'stages.id as stage_id',
-            'stages.stage_name',
-            'logs.haslog'
+            'stages.id',
+            'stages.stage_name'
         )
-        ->orderBy('scenarios.id', 'asc')
         ->get();
 
-        $matrix = [];
-        foreach ($Scenarios as $Scenario) {
-            $matrix[$Scenario->stage_id][$Scenario->times] = $Scenario;
+        foreach ($Stages as $Stage) {
+            $matrix =  [];
+            foreach ($Stage->Scenarios as $Scenario) {
+                $matrix[$Scenario->times] = $Scenario;
+            }
+            $Stage->matrix =  $matrix;
         }
 
-        $LastScenarios = DB::table('scenarios')
-        ->join('logs', 'scenarios.id', '=', 'logs.scenario_id')
+
+        $LastScenarios = Scenario::join('logs', 'scenarios.id', '=', 'logs.scenario_id')
         ->select(
             'scenarios.id',
             'scenarios.scenario_name'
@@ -72,7 +58,7 @@ class HomeController extends Controller
         ->first();
 
         return view('home')
-        ->with('matrix', $matrix)
+        ->with('Stages', $Stages)
         ->with('LastScenarios', $LastScenarios);
     }
 
@@ -83,10 +69,7 @@ class HomeController extends Controller
 
         $Bot = Bot::find($Scenario->bot_id);
 
-        $UserAvatar = DB::table('user_avatars')
-        ->where('user_id', '=', $User->id)
-        ->orderBy('id', 'asc')
-        ->first();
+        $UserAvatar = $User->Avatar;
 
         $Repluser = Repluser::where([ ['user_id', $User->id], ['bot_id', $Bot->id] ])->first();
 
@@ -142,8 +125,7 @@ class HomeController extends Controller
     }
 
     public function getLog($User, $scenario_id = null, $stage_id = null){
-        $query = DB::table('logs')
-        ->join('bots', 'logs.bot_id', '=', 'bots.id')
+        $query = Log::join('bots', 'logs.bot_id', '=', 'bots.id')
         ->join('scenarios', 'logs.scenario_id', '=', 'scenarios.id')
         ->join('stages', 'scenarios.stage_id', '=', 'stages.id')
         ->select(

@@ -21,4 +21,14 @@ class Repluser extends Model
     protected $fillable = [
         'user_id', 'bot_id','repl_user_id'
     ];
+
+    public function User()
+    {
+        return $this->belongsTo('App\User');
+    }
+
+    public function Bot()
+    {
+        return $this->belongsTo('App\Bot');
+    }
 }

@@ -13,12 +13,14 @@
                                 <div class="col">ID</div>
                                 <div class="col">{{ __('Username') }}</div>
                                 <div class="col"></div>
+                                <div class="col"></div>
                             </div>
                         @foreach ($Users as $User)
                             <div class="row border-bottom">
                                 <div class="col">{{ $User->id }}</div>
                                 <div class="col">{{ $User->user_name }}</div>
                                 <div class="col"><a href="{{ route('admin_user_log', $User->id) }}">会話ログ確認</a></div>
+                                <div class="col"><a href="{{ route('admin_user_delete', $User->id) }}">削除</a></div>
                             </div>
                         @endforeach
                     @endif
