@@ -47516,6 +47516,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         user_id: [String, Number],
         bot_id: [String, Number],
         scenario_id: [String, Number],
+        haslog: [Boolean],
         user_avatar: [String]
     },
     data: function data() {
@@ -47528,8 +47529,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 bot_id: this.bot_id,
                 scenario_id: this.scenario_id,
                 contents: ''
-            },
-            speed: 400
+            }
         };
     },
     methods: {
@@ -47581,8 +47581,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             document.getElementById("talkerea").scrollTop = scrollHeight;
         });
 
-        this.params.contents = 'init';
-        this.talkMessage();
+        if (!this.haslog) {
+            this.params.contents = 'init';
+            this.talkMessage();
+        }
     }
 });
 

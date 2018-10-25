@@ -46,8 +46,7 @@ class UserController extends Controller
         $User = User::find($id);
 
         $Scenarios = Scenario::whereIn('id',
-            DB::table('logs')
-            ->where('user_id', '=', $id)
+            Log::where('user_id', '=', $id)
             ->select('scenario_id')
             ->groupBy('scenario_id')
         )

@@ -11,6 +11,7 @@ use App\Repluser;
 use App\School;
 use App\Stage;
 use App\Log;
+use App\Finished;
 
 class HomeController extends Controller
 {
@@ -45,7 +46,12 @@ class HomeController extends Controller
         foreach ($Stages as $Stage) {
             $matrix =  [];
             foreach ($Stage->Scenarios as $Scenario) {
-                $Scenario->haslog = DB::table('logs')->where('user_id', $User->id)->where('scenario_id', $Scenario->id)->exists();
+                $Scenario->haslog = Log::where('user_id', $User->id)
+                    ->where('scenario_id', $Scenario->id)
+                    ->exists();
+                $Scenario->finished = Finished::where('user_id', $User->id)
+                    ->where('scenario_id', $Scenario->id)
+                    ->exists();
                 $matrix[$Scenario->times] = $Scenario;
             }
             $Stage->matrix = $matrix;
@@ -68,6 +74,9 @@ class HomeController extends Controller
     {
         $User = Auth::user();
         $Scenario = Scenario::find($scenarioid);
+        $Scenario->haslog = Log::where('user_id', $User->id)
+            ->where('scenario_id', $Scenario->id)
+            ->exists();
 
         $Bot = Bot::find($Scenario->bot_id);
 
@@ -102,7 +111,6 @@ class HomeController extends Controller
         }
 
         $Logs = $this->getLog($User, null, $Scenario->stage_id);
-
         return view('talk')
         ->with('User', $User)
         ->with('Repluser', $Repluser)

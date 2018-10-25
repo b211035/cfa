@@ -11,6 +11,9 @@ use App\Scenario;
 use App\Bot;
 use App\Repluser;
 use App\Log;
+use App\UserAvatar;
+use App\BotAvatar;
+use App\Finished;
 
 class ApiController extends Controller
 {
@@ -30,8 +33,7 @@ class ApiController extends Controller
         $Repluser = Repluser::where([ ['repl_user_id', $request->input('user_id')] ])->first();
         $User = User::where([ ['id', $Repluser->user_id] ])->first();
 
-        $BotAndScenario = DB::table('scenarios')
-        ->join('bots', 'scenarios.bot_id', '=', 'bots.id')
+        $BotAndScenario = Scenario::join('bots', 'scenarios.bot_id', '=', 'bots.id')
         ->join('teacher_user_relations', 'scenarios.teacher_id', '=', 'teacher_user_relations.teacher_id')
         ->where('teacher_user_relations.user_id', '=', $User->id)
         ->where('bots.bot_id', '=', $request->input('bot_id'))
@@ -47,8 +49,7 @@ class ApiController extends Controller
 
         $api_key = $BotAndScenario->api_key;
 
-        $DefaultUserAvatar = DB::table('user_avatars')
-        ->where('user_id', '=', $User->id)
+        $DefaultUserAvatar = UserAvatar::where('user_id', '=', $User->id)
         ->where('protcol', '=', '0')
         ->first();
 
@@ -95,8 +96,7 @@ class ApiController extends Controller
         $result = json_decode($response, true);
         curl_close($curl);
 
-        $DefaultAvatar = DB::table('bot_avatars')
-        ->where('bot_id', '=', $BotAndScenario->bid)
+        $DefaultAvatar = BotAvatar::where('bot_id', '=', $BotAndScenario->bid)
         ->where('protcol', '=', '0')
         ->first();
 
@@ -109,11 +109,18 @@ class ApiController extends Controller
         $expression = $result['systemText']['expression'];
         $expression = str_replace('\n', '<br>', $expression);
 
+        if (strpos($expression, '\end')) {
+            $expression = str_replace('\end', '', $expression);
+            Finished::create([
+                'user_id' => $User->id,
+                'scenario_id' => $BotAndScenario->sid,
+            ]);
+        }
+
         if (preg_match('/\\\s\d+/u',  $expression, $matches)) {
             $expression = str_replace($matches[0], '', $expression);
             $protcol = str_replace('\s', '', $matches[0]);
-            $BotAvatar = DB::table('bot_avatars')
-            ->where('bot_id', '=', $BotAndScenario->bid)
+            $BotAvatar = BotAvatar::where('bot_id', '=', $BotAndScenario->bid)
             ->where('protcol', '=', (int)$protcol)
             ->first();
             if ($BotAvatar) {
@@ -144,8 +151,7 @@ class ApiController extends Controller
             return response()->json([]);
         }
 
-        $query = DB::table('scenarios')
-        ->orderBy('scenarios.id', 'asc');
+        $query = Scenario::orderBy('scenarios.id', 'asc');
 
         if ($request->input('id')) {
             $query->where('scenarios.id', '=', $request->input('id'));
@@ -187,8 +193,7 @@ class ApiController extends Controller
             return response()->json([]);
         }
 
-        $query = DB::table('logs')
-        ->orderBy('logs.id', 'asc');
+        $query = Log::orderBy('logs.id', 'asc');
 
         if ($request->input('id')) {
             $query->where('logs.id', '=', $request->input('id'));
@@ -230,8 +235,7 @@ class ApiController extends Controller
             return response()->json([]);
         }
 
-        $query = DB::table('bots')
-        ->orderBy('bots.id', 'asc');
+        $query = Bot::orderBy('bots.id', 'asc');
 
         if ($request->input('id')) {
             $query->where('bots.id', '=', $request->input('id'));
@@ -261,8 +265,7 @@ class ApiController extends Controller
             return response()->json([]);
         }
 
-        $query = DB::table('users')
-        ->orderBy('users.id', 'asc');
+        $query = User::orderBy('users.id', 'asc');
 
         if ($request->input('id')) {
             $query->where('users.id', '=', $request->input('id'));
@@ -350,8 +353,7 @@ class ApiController extends Controller
             'user_name' => $User->user_name
         ];
 
-        $query = DB::table('bots')
-            ->join('teacher_user_relations', 'bots.teacher_id', '=', 'teacher_user_relations.teacher_id')
+        $query = Bot::join('teacher_user_relations', 'bots.teacher_id', '=', 'teacher_user_relations.teacher_id')
             ->where('teacher_user_relations.user_id', '=', $User->id)
             ->select(
                 'bots.id',
@@ -396,8 +398,7 @@ class ApiController extends Controller
             }
             $Bot->repl_user_id = $Repluser->repl_user_id;
 
-            $query = DB::table('stages')
-                ->join('teacher_user_relations', 'stages.teacher_id', '=', 'teacher_user_relations.teacher_id')
+            $query = Stage::join('teacher_user_relations', 'stages.teacher_id', '=', 'teacher_user_relations.teacher_id')
                 ->select(
                     'stages.id',
                     'stages.stage_name'
@@ -407,8 +408,7 @@ class ApiController extends Controller
             $Stages = $query->get();
 
             foreach ($Stages as $Stage) {
-                $query = DB::table('scenarios')
-                    ->select(
+                $query = Scenario::select(
                         'id',
                         'scenario_id',
                         'scenario_name',
@@ -419,8 +419,7 @@ class ApiController extends Controller
                 $Scenarios = $query->get();
 
                 foreach ($Scenarios as $Scenario) {
-                    $query = DB::table('logs')
-                        ->select(
+                    $query = Log::select(
                             'sender_flg',
                             'contents',
                             'send_date'

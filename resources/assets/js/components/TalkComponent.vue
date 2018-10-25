@@ -50,6 +50,7 @@
             user_id: [String, Number],
             bot_id: [String, Number],
             scenario_id: [String, Number],
+            haslog: [Boolean],
             user_avatar: [String]
         },
         data: function () {
@@ -62,8 +63,7 @@
                     bot_id: this.bot_id,
                     scenario_id: this.scenario_id,
                     contents: ''
-                },
-                speed: 400
+                }
             }
         },
         methods: {
@@ -120,8 +120,10 @@
                     document.getElementById("talkerea").scrollTop = scrollHeight;
               })
 
-            this.params.contents = 'init';
-            this.talkMessage();
+            if (!this.haslog) {
+                this.params.contents = 'init';
+                this.talkMessage();
+            }
         }
     }
 </script>
