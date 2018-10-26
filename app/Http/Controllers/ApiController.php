@@ -109,6 +109,10 @@ class ApiController extends Controller
         $expression = $result['systemText']['expression'];
         $expression = str_replace('\n', '<br>', $expression);
 
+        if (preg_match("/(https?:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)/", $expression, $matches)) {
+            $expression = str_replace($matches[0], '<a href="'.$matches[0].'" target="_blank">'.$matches[0].'</a>', $expression);
+        }
+
         if (strpos($expression, '\end')) {
             $expression = str_replace('\end', '', $expression);
             Finished::create([
@@ -117,7 +121,7 @@ class ApiController extends Controller
             ]);
         }
 
-        if (preg_match('/\\\s\d+/u',  $expression, $matches)) {
+        if (preg_match('/\\\s\d+/u', $expression, $matches)) {
             $expression = str_replace($matches[0], '', $expression);
             $protcol = str_replace('\s', '', $matches[0]);
             $BotAvatar = BotAvatar::where('bot_id', '=', $BotAndScenario->bid)

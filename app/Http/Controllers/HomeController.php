@@ -74,7 +74,7 @@ class HomeController extends Controller
     {
         $User = Auth::user();
         $Scenario = Scenario::find($scenarioid);
-        $Scenario->haslog = Log::where('user_id', $User->id)
+        $Scenario->haslog = (int)Log::where('user_id', $User->id)
             ->where('scenario_id', $Scenario->id)
             ->exists();
 
