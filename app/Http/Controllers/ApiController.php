@@ -109,8 +109,10 @@ class ApiController extends Controller
         $expression = $result['systemText']['expression'];
         $expression = str_replace('\n', '<br>', $expression);
 
-        if (preg_match("/(https?:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)/", $expression, $matches)) {
-            $expression = str_replace($matches[0], '<a href="'.$matches[0].'" target="_blank">'.$matches[0].'</a>', $expression);
+        if (preg_match_all("/(https?:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)/", $expression, $matches)) {
+            foreach ($matches[0] as $matche) {
+                $expression = str_replace($matche, '<a href="'.$matche.'" target="_blank">'.$matche.'</a>', $expression);
+            }
         }
 
         if (strpos($expression, '\end')) {
