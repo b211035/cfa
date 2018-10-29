@@ -47563,7 +47563,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 obj.sender_flg = 1;
                 _this.log_list.push(obj);
 
-                _this.readonly = false;
+                if (response.data.systemText.expression_org.indexOf('\end') == -1) {
+                    _this.readonly = false;
+                }
                 _this.params.contents = '';
 
                 Vue.nextTick().then(function () {

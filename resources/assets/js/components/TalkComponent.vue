@@ -99,7 +99,9 @@
                             obj.sender_flg = 1;
                             this.log_list.push(obj);
 
-                            this.readonly = false;
+                            if (response.data.systemText.expression_org.indexOf('\end') == -1) {
+                                this.readonly = false;
+                            }
                             this.params.contents = '';
 
                             Vue.nextTick()
