@@ -14,6 +14,7 @@ use App\Log;
 use App\UserAvatar;
 use App\BotAvatar;
 use App\Finished;
+use App\Stage;
 
 class ApiController extends Controller
 {
