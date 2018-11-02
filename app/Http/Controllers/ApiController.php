@@ -14,6 +14,7 @@ use App\Log;
 use App\UserAvatar;
 use App\BotAvatar;
 use App\Finished;
+use App\Stop;
 use App\Stage;
 
 class ApiController extends Controller
@@ -72,6 +73,10 @@ class ApiController extends Controller
                 'avater_image' => $user_image,
                 'send_date' => $Date->format('Y-m-d H:i:s')
             ]);
+        } else {
+            DB::table('stops')->where('user_id', $User->id)
+                ->where('scenario_id', $BotAndScenario->sid)
+                ->delete();
         }
 
         $header = ['Content-Type: application/json', 'x-api-key: '.$api_key];
@@ -110,18 +115,26 @@ class ApiController extends Controller
         $expression = $result['systemText']['expression'];
         $expression = str_replace('\n', '<br>', $expression);
 
-        if (preg_match_all("/(https?:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)/", $expression, $matches)) {
-            foreach ($matches[0] as $matche) {
-                $expression = str_replace($matche, '<a href="'.$matche.'" target="_blank">'.$matche.'</a>', $expression);
-            }
-        }
-
         if (strpos($expression, '\end')) {
             $expression = str_replace('\end', '', $expression);
             Finished::create([
                 'user_id' => $User->id,
                 'scenario_id' => $BotAndScenario->sid,
             ]);
+        }
+
+        if (strpos($expression, '\stop')) {
+            $expression = str_replace('\stop', '', $expression);
+            Stop::create([
+                'user_id' => $User->id,
+                'scenario_id' => $BotAndScenario->sid,
+            ]);
+        }
+
+        if (preg_match_all("/(https?:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)/", $expression, $matches)) {
+            foreach ($matches[0] as $matche) {
+                $expression = str_replace($matche, '<a href="'.$matche.'" target="_blank">'.$matche.'</a>', $expression);
+            }
         }
 
         if (preg_match('/\\\s\d+/u', $expression, $matches)) {
@@ -324,8 +337,9 @@ class ApiController extends Controller
                 'password' => $data['password']
             ];
 
+            $cfa_url = \Config::get('const.cfa_url').'/api/usercheck';
             $option = [
-                CURLOPT_URL => 'http://dev.coachforall.jp/api/usercheck',
+                CURLOPT_URL => $cfa_url,
                 CURLOPT_CUSTOMREQUEST => 'POST',
                 CURLOPT_HTTPHEADER => $header,
                 CURLOPT_RETURNTRANSFER => true,

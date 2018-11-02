@@ -12,6 +12,7 @@ use App\School;
 use App\Stage;
 use App\Log;
 use App\Finished;
+use App\Stop;
 
 class HomeController extends Controller
 {
@@ -75,6 +76,9 @@ class HomeController extends Controller
         $User = Auth::user();
         $Scenario = Scenario::find($scenarioid);
         $Scenario->haslog = (int)Log::where('user_id', $User->id)
+            ->where('scenario_id', $Scenario->id)
+            ->exists();
+        $Scenario->stop = (int)Stop::where('user_id', $User->id)
             ->where('scenario_id', $Scenario->id)
             ->exists();
 

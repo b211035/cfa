@@ -86,8 +86,9 @@ class LoginController extends Controller
                 'password' => $request->input('password')
             ];
 
+            $cfa_url = \Config::get('const.cfa_url').'/api/usercheck';
             $option = [
-                CURLOPT_URL => 'http://dev.coachforall.jp/api/usercheck',
+                CURLOPT_URL => $cfa_url,
                 CURLOPT_CUSTOMREQUEST => 'POST',
                 CURLOPT_HTTPHEADER => $header,
                 CURLOPT_RETURNTRANSFER => true,

@@ -47549,6 +47549,7 @@ if (typeof Object.assign != 'function') {
         bot_id: [String, Number],
         scenario_id: [String, Number],
         haslog: [String, Number],
+        stop: [String, Number],
         user_avatar: [String]
     },
     data: function data() {
@@ -47595,7 +47596,7 @@ if (typeof Object.assign != 'function') {
                 obj.sender_flg = 1;
                 _this.log_list.push(obj);
 
-                if (response.data.systemText.expression_org.indexOf('\end') == -1) {
+                if (response.data.systemText.expression_org.indexOf('\end') == -1 && response.data.systemText.expression_org.indexOf('\stop') == -1) {
                     _this.readonly = false;
                 }
                 _this.params.contents = '';
@@ -47615,7 +47616,7 @@ if (typeof Object.assign != 'function') {
             document.getElementById("talkerea").scrollTop = scrollHeight;
         });
 
-        if (this.haslog == 0) {
+        if (this.haslog == 0 || this.stop == 1) {
             this.params.contents = 'init';
             this.talkMessage();
         }
