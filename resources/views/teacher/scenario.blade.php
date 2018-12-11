@@ -26,7 +26,7 @@
                                 <div class="col">{{ $Scenario->id }}</div>
                                 <div class="col">{{ $Scenario->scenario_id }}</div>
                                 <div class="col">{{ $Scenario->scenario_name }}</div>
-                                <div class="col">{{ $Scenario->Stage->stage_name }}</div>
+                                <div class="col">@if ($Scenario->Stage) {{ $Scenario->Stage->stage_name }} @endif</div>
                                 <div class="col">{{ $Scenario->times }}</div>
                                 <div class="col"><a href="{{ route('teacher_scenario_update', $Scenario->id) }}">編集</a></div>
                                 <div class="col"><a href="{{ route('teacher_scenario_delete', $Scenario->id) }}">削除</a></div>

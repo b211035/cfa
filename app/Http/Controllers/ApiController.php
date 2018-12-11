@@ -16,6 +16,7 @@ use App\BotAvatar;
 use App\Finished;
 use App\Stop;
 use App\Stage;
+use App\Progress;
 
 class ApiController extends Controller
 {
@@ -64,12 +65,17 @@ class ApiController extends Controller
         $contents = $request->input('contents');
         $Date = new \Datetime();
         if ($contents != 'init') {
+            $save_contents = $contents;
+            if ($contents == 'back') {
+                $save_contents = '[戻る]';
+            }
+
             Log::create([
                 'user_id' => $User->id,
                 'bot_id' => $BotAndScenario->bid,
                 'scenario_id' => $BotAndScenario->sid,
                 'sender_flg' => 0,
-                'contents' => $contents,
+                'contents' => $save_contents,
                 'avater_image' => $user_image,
                 'send_date' => $Date->format('Y-m-d H:i:s')
             ]);
@@ -85,8 +91,10 @@ class ApiController extends Controller
             'botId' => $BotAndScenario->bot_id,
             'voiceText' => $contents,
             'initTalkingFlag' => ($contents == 'init') ?? true || false,
-            'initTopicId' => $BotAndScenario->scenario_id,
         ];
+        if ($body['initTalkingFlag']) {
+            $body['initTopicId'] = $BotAndScenario->scenario_id;
+        }
 
         $option = [
             CURLOPT_URL => 'https://api.repl-ai.jp/v1/dialogue',
@@ -113,14 +121,91 @@ class ApiController extends Controller
         }
 
         $expression = $result['systemText']['expression'];
-        $expression = str_replace('\n', '<br>', $expression);
+
+        if ($expression == 'NOMATCH') {
+            switch (rand(1,3)) {
+                case 1:
+                    $expression = 'ごめん、俺まだ勉強不足じゃけ言い方かえてくれん?\s03';
+                    break;
+                case 2:
+                    $expression= 'わかりまっしぇーーーーーーん！\s03';
+                    break;
+                default:
+                    $expression = 'その言葉初めて聞いたわ、違う言葉でいってくれん？\s03';
+                    break;
+            }
+        }
+
+
+        if (preg_match('/\\\next\d+/u', $expression, $matches)) {
+            $expression = str_replace($matches[0], '', $expression);
+            $protcol = str_replace('\next', '', $matches[0]);
+
+
+            if ($User->Progress) {
+                $Progress = $User->Progress;
+            } else {
+                $Progress = Progress::create ([
+                    'user_id' => $User->id,
+                ]);
+            }
+
+            $Progress->next_stage = (int)$protcol;
+            $Progress->save();
+        }
+
 
         if (strpos($expression, '\end')) {
             $expression = str_replace('\end', '', $expression);
-            Finished::create([
-                'user_id' => $User->id,
-                'scenario_id' => $BotAndScenario->sid,
-            ]);
+
+            $Finished = Finished::where('user_id', $User->id)
+                ->where('scenario_id', $BotAndScenario->sid)
+                ->first();
+            if (!$Finished) {
+                Finished::create([
+                    'user_id' => $User->id,
+                    'scenario_id' => $BotAndScenario->sid,
+                ]);
+            }
+
+            $NowScenario = Scenario::find($BotAndScenario->sid);
+            $nextScenario = Scenario::where('times', '=', $NowScenario->times + 1)->where('stage_id', '=', $NowScenario->stage_id)->first();
+            if ($User->Progress) {
+                $Progress = $User->Progress;
+            } else {
+                $Progress = Progress::create ([
+                    'user_id' => $User->id,
+                ]);
+            }
+
+            if ($nextScenario) {
+                // 同じステージに次のシナリオがあるなら選択
+                $Progress->next_scenario_id = $nextScenario->id;
+            } else {
+                // 同じステージに次のシナリオがないなら次のステージへ
+                $nextStageDefault = $NowScenario->Stage->nextStages()->first();
+
+                if ($nextStageDefault) {
+                    // 次のステージがあれば分岐を処理する
+                    $nextStage = $NowScenario->Stage->nextStages()->where('level', '=', $Progress->next_stage)->first();
+                    if (!$nextStage) {
+                        $nextStage = $nextStageDefault;
+                    }
+
+                    // 次のシナリオＩＤを保持
+                    $nextScenario = $nextStage->Scenarios()->where('times', '=', '1')->first();
+                    if ($nextScenario) {
+                        $Progress->next_scenario_id = $nextScenario->id;
+                    } else {
+                        $Progress->next_scenario_id = null;
+                    }
+                } else {
+                    // 次のステージがなければ進行をリセット
+                    $Progress->next_scenario_id = null;
+                }
+                $Progress->next_stage = null;
+            }
+            $Progress->save();
         }
 
         if (strpos($expression, '\stop')) {
@@ -147,6 +232,8 @@ class ApiController extends Controller
                 $result['avatarImage'] = route('root') . '/storage/bot/'.$BotAvatar->filename;
             }
         }
+
+        $expression = str_replace('\n', '<br>', $expression);
 
         Log::create([
             'user_id' => $User->id,
@@ -449,6 +536,13 @@ class ApiController extends Controller
                         ->where('scenario_id', '=', $Scenario->id)
                         ->orderBy('logs.id', 'asc');
                     $Logs = $query->get();
+
+                    $Scenario->stop = Stop::where('user_id', $User->id)
+                        ->where('scenario_id', $Scenario->id)
+                        ->exists();
+                    $Scenario->finished = Finished::where('user_id', $User->id)
+                        ->where('scenario_id', $Scenario->id)
+                        ->exists();
 
                     $Scenario->logs = $Logs;
                 }

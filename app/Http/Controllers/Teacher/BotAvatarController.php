@@ -128,7 +128,7 @@ class BotAvatarController extends Controller
     public function delete($bot_id, $avatar_id)
     {
         $BotAvatar = BotAvatar::find($avatar_id);
-        Storage::delete('public/bot/'.$BotAvatar->filename);
+        // Storage::delete('public/bot/'.$BotAvatar->filename);
 
         $BotAvatar->delete();
         return redirect()->route('teacher_bot_avatar', $bot_id);

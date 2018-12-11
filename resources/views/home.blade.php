@@ -41,7 +41,14 @@
                                             @if ($Stage->matrix[$i]->finished)
                                             <a href="{{ route('log', $Stage->matrix[$i]->id) }}">{{ $Stage->matrix[$i]->scenario_name }}</a>
                                             @else
-                                            <a href="{{ route('talk', $Stage->matrix[$i]->id) }}">{{ $Stage->matrix[$i]->scenario_name }}</a>
+                                                @if (
+                                                  ($Progress->next_scenario_id == $Stage->matrix[$i]->id) ||
+                                                  ($Progress->next_scenario_id == null && $Stage->PrevStages->isEmpty() && $i == 1)
+                                                )
+                                                <a href="{{ route('talk', $Stage->matrix[$i]->id) }}">{{ $Stage->matrix[$i]->scenario_name }}</a>
+                                                @else
+                                                    {{ $Stage->matrix[$i]->scenario_name }}
+                                                @endif
                                             @endif
                                         @endif
                                     </div>

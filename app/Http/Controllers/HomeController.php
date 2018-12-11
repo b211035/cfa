@@ -13,6 +13,7 @@ use App\Stage;
 use App\Log;
 use App\Finished;
 use App\Stop;
+use App\Progress;
 
 class HomeController extends Controller
 {
@@ -63,11 +64,21 @@ class HomeController extends Controller
             'scenarios.id',
             'scenarios.scenario_name'
         )
+        ->where('logs.user_id', '=', $User->id)
         ->orderBy('logs.send_date', 'desc')
         ->first();
+        if ($User->Progress) {
+            $Progress = $User->Progress;
+        } else {
+            $Progress = Progress::create ([
+                'user_id' => $User->id,
+            ]);
+        }
+
 
         return view('home')
         ->with('Stages', $Stages)
+        ->with('Progress', $Progress)
         ->with('LastScenarios', $LastScenarios);
     }
 

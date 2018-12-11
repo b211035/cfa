@@ -17,6 +17,7 @@
                                 <div class="col">{{ __('Stagename') }}</div>
                                 <div class="col"></div>
                                 <div class="col"></div>
+                                <div class="col"></div>
                             </div>
                         @foreach ($Stages as $Stage)
                             <div class="row border-bottom">
@@ -24,6 +25,7 @@
                                 <div class="col">{{ $Stage->stage_name }}</div>
                                 <div class="col"><a href="{{ route('teacher_stage_update', $Stage->id) }}">編集</a></div>
                                 <div class="col"><a href="{{ route('teacher_stage_delete', $Stage->id) }}">削除</a></div>
+                                <div class="col"><a href="{{ route('teacher_next_stage', $Stage->id) }}">遷移先シナリオ設定</a></div>
                             </div>
                         @endforeach
                     @endif

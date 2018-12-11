@@ -38,6 +38,9 @@
             <div class="col-auto align-self-end">
                 <button id="talk" class="btn btn-default" v-on:click="talkMessage" v-bind:disabled="readonly">発話</button>
             </div>
+            <div class="col-auto align-self-end">
+                <button id="back" class="btn btn-secondary" v-on:click="backMessage" v-bind:disabled="readonly">戻る</button>
+            </div>
         </div>
     </div>
 </template>
@@ -102,7 +105,7 @@
                 }
                 this.readonly = true;
 
-                if (this.params.contents !== 'init') {
+                if (this.params.contents !== 'init' && this.params.contents !== 'back') {
 
                     var obj = Object.assign({}, this.log_list[0]);
                     obj.avater_image = this.user_avatar;
@@ -143,6 +146,10 @@
                               })
 
                     });
+            },
+            backMessage: function() {
+                this.params.contents = 'back';
+                this.talkMessage();
             }
         },
         mounted() {

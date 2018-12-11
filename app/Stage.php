@@ -32,4 +32,15 @@ class Stage extends Model
     {
         return $this->hasMany('App\Scenario');
     }
+
+    public function NextStages()
+    {
+        return $this->belongsToMany('App\Stage', 'stage_chains', 'prev_stage_id', 'next_stage_id')->withPivot('level');;
+    }
+
+    public function PrevStages()
+    {
+        return $this->belongsToMany('App\Stage', 'stage_chains', 'next_stage_id', 'prev_stage_id')->withPivot('level');;
+    }
+
 }

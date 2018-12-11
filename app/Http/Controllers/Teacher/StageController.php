@@ -109,4 +109,39 @@ class StageController extends Controller
         return redirect()->route('teacher_stage');
     }
 
+    public function nextStage(Request $request, $id){
+        $Teacher = Auth::user();
+
+        $Stages = $Teacher->Stages;
+        $PrevStage = Stage::find($id);
+
+        return view('teacher.next_stage')
+        ->with('PrevStage', $PrevStage)
+        ->with('Stages', $Stages);
+    }
+
+    public function addNextStage(Request $request, $prev_id){
+        $next_id = $request->input('next_id');
+        $PrevStage = Stage::find($prev_id);
+
+        $level = $PrevStage->nextStages()->count() + 1;
+
+        $PrevStage->nextStages()->attach($next_id, ['level' => $level]);
+        return redirect()->route('teacher_next_stage', $prev_id);
+    }
+
+
+    public function deleteNextStage(Request $request, $prev_id, $next_id){
+        $PrevStage = Stage::find($prev_id);
+
+        $DeleteStage = $PrevStage->nextStages()->where('next_stage_id', '=', $next_id)->first();
+        DB::table('stage_chains')
+            ->where('level', '>', $DeleteStage->pivot->level)
+            ->decrement('level');
+
+        $PrevStage->nextStages()->detach($next_id);
+
+        return redirect()->route('teacher_next_stage', $prev_id);
+    }
+
 }

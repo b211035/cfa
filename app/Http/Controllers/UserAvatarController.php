@@ -108,7 +108,7 @@ class UserAvatarController extends Controller
     public function delete($avatar_id)
     {
         $UserAvatar = UserAvatar::find($avatar_id);
-        Storage::delete('public/user/'.$UserAvatar->filename);
+        // Storage::delete('public/user/'.$UserAvatar->filename);
 
         $UserAvatar->delete();
         return redirect()->route('user_avatar');

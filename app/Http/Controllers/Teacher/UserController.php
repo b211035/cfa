@@ -222,6 +222,7 @@ class UserController extends Controller
         fputcsv($stream, $csvHeader);
         foreach ($Logs as $Log) {
             $log = json_decode(json_encode($Log), true);
+            $log['scenario_name'] = "'".$log['scenario_name']; 
             $log['sender_flg'] = ($log['sender_flg'] == 1) ? $log['bot_name'] : $log['user_name'];
             fputcsv($stream, $log);
         }

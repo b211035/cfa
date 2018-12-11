@@ -78,6 +78,10 @@ Route::prefix('teacher')->group(function () {
     Route::post('stage/update/{id}', 'Teacher\StageController@update');
     Route::get('stage/delete/{id}', 'Teacher\StageController@delete')->name('teacher_stage_delete');
 
+    Route::get('stage/next/{prev_id}', 'Teacher\StageController@nextStage')->name('teacher_next_stage');
+    Route::post('stage/next/{prev_id}', 'Teacher\StageController@addNextStage');
+    Route::get('stage/next/delete/{prev_id}/{next_id}', 'Teacher\StageController@deleteNextStage')->name('teacher_next_stage_delete');
+
     Route::get('user', 'Teacher\UserController@index')->name('teacher_user');
     Route::get('user/regist', 'Teacher\UserController@registForm')->name('teacher_user_regist');
     Route::post('user/regist', 'Teacher\UserController@regist');

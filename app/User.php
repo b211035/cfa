@@ -38,6 +38,11 @@ class User extends Authenticatable
         return $this->hasOne('App\UserAvatar');
     }
 
+    public function Progress()
+    {
+        return $this->hasOne('App\Progress');
+    }
+
     public function Replusers()
     {
         return $this->hasMany('App\Repluser');

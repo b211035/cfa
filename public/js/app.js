@@ -47508,6 +47508,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
 
 if (typeof Object.assign != 'function') {
     Object.defineProperty(Object, "assign", {
@@ -47574,7 +47577,7 @@ if (typeof Object.assign != 'function') {
             }
             this.readonly = true;
 
-            if (this.params.contents !== 'init') {
+            if (this.params.contents !== 'init' && this.params.contents !== 'back') {
 
                 var obj = Object.assign({}, this.log_list[0]);
                 obj.avater_image = this.user_avatar;
@@ -47606,6 +47609,10 @@ if (typeof Object.assign != 'function') {
                     document.getElementById("talkerea").scrollTop = scrollHeight;
                 });
             });
+        },
+        backMessage: function backMessage() {
+            this.params.contents = 'back';
+            this.talkMessage();
         }
     },
     mounted: function mounted() {
@@ -47732,6 +47739,18 @@ var render = function() {
             on: { click: _vm.talkMessage }
           },
           [_vm._v("発話")]
+        )
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "col-auto align-self-end" }, [
+        _c(
+          "button",
+          {
+            staticClass: "btn btn-secondary",
+            attrs: { id: "back", disabled: _vm.readonly },
+            on: { click: _vm.backMessage }
+          },
+          [_vm._v("戻る")]
         )
       ])
     ])

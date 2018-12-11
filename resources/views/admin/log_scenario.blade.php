@@ -26,7 +26,7 @@
                                                 ">
                                             </div>
                                             <div class="col talkbox bottalk rounded">
-                                                {{ $Log->contents }}
+                                                {!! $Log->contents !!}
                                             </div>
                                         </div>
                                     </div>
