@@ -17,7 +17,7 @@
                     </talk-component>
                     <div>
                         <p>
-                            <a href="{{ route('home') }}">戻る</a>
+                            <a href="{{ route('home') }}" id="return">戻る</a>
                         </p>
                     </div>
                 </div>

@@ -136,6 +136,10 @@
                                 response.data.systemText.expression_org.indexOf('\stop') == -1
                                 ) {
                                 this.readonly = false;
+                            } else {
+                                setTimeout(function(){
+                                     window.location.href = $("#return").attr('href');
+                                }, 3000);
                             }
                             this.params.contents = '';
 
