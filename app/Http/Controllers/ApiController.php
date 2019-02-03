@@ -156,6 +156,7 @@ class ApiController extends Controller
 
 
         if (strpos($expression, '\end')) {
+            $expression = str_replace('\end2', '', $expression);
             $expression = str_replace('\end', '', $expression);
 
             $Finished = Finished::where('user_id', $User->id)

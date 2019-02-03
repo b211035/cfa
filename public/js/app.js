@@ -47601,6 +47601,10 @@ if (typeof Object.assign != 'function') {
 
                 if (response.data.systemText.expression_org.indexOf('\end') == -1 && response.data.systemText.expression_org.indexOf('\stop') == -1) {
                     _this.readonly = false;
+                } else if (response.data.systemText.expression_org.indexOf('\end2') != -1) {
+                    setTimeout(function () {
+                        window.location.href = $("#return").attr('href');
+                    }, 7000);
                 } else {
                     setTimeout(function () {
                         window.location.href = $("#return").attr('href');
