@@ -76,6 +76,7 @@ class ApiController extends Controller
                 'scenario_id' => $BotAndScenario->sid,
                 'sender_flg' => 0,
                 'contents' => $save_contents,
+                'contents_org' => $contents,
                 'avater_image' => $user_image,
                 'send_date' => $Date->format('Y-m-d H:i:s')
             ]);
@@ -242,6 +243,7 @@ class ApiController extends Controller
             'scenario_id' => $BotAndScenario->sid,
             'sender_flg' => 1,
             'contents' => $expression,
+            'contents_org' => $result['systemText']['expression'],
             'avater_image' => $result['avatarImage'],
             'send_date' => $result['serverSendTime']
         ]);
