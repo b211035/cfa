@@ -47604,11 +47604,11 @@ if (typeof Object.assign != 'function') {
                 } else if (response.data.systemText.expression_org.indexOf('\end2') != -1) {
                     setTimeout(function () {
                         window.location.href = $("#return").attr('href');
-                    }, 7000);
+                    }, 15000);
                 } else {
                     setTimeout(function () {
                         window.location.href = $("#return").attr('href');
-                    }, 3000);
+                    }, 10000);
                 }
                 _this.params.contents = '';
 

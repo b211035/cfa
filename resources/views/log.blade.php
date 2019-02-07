@@ -20,7 +20,7 @@
                                                 ">
                                             </div>
                                             <div class="col talkbox bottalk rounded">
-                                                {{ $Log->contents }}
+                                                {!! $Log->contents !!}
                                             </div>
                                         </div>
                                     </div>
@@ -30,7 +30,7 @@
                                     <div class="col-9 align-self-end">
                                         <div class="row no-gutters">
                                             <div class="col talkbox usertalk rounded">
-                                                {{ $Log->contents }}
+                                                {!! $Log->contents !!}
                                             </div>
                                             <div class="col-auto avatar">
                                                 <img class="avater_image" src="
