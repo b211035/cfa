@@ -22,11 +22,6 @@ class Bot extends Model
         'bot_id', 'bot_name', 'teacher_id', 'api_key'
     ];
 
-    public function Avatars()
-    {
-        return $this->hasMany('App\BotAvatar');
-    }
-
     public function Replusers()
     {
         return $this->hasMany('App\Repluser');

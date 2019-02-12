@@ -15,7 +15,7 @@ class BotAvatar extends Model
      * @var array
      */
     protected $fillable = [
-        'bot_id', 'filename', 'protcol'
+        'teacher_id', 'filename', 'protcol', 'emotion'
     ];
 
     public function Teacher()

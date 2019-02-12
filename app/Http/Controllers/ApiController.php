@@ -42,6 +42,7 @@ class ApiController extends Controller
         ->where('bots.bot_id', '=', $request->input('bot_id'))
         ->where('scenarios.scenario_id', '=', $request->input('scenario_id'))
         ->select(
+            'scenarios.teacher_id',
             'scenarios.id as sid',
             'scenarios.scenario_id',
             'bots.id as bid',
@@ -111,7 +112,7 @@ class ApiController extends Controller
         $result = json_decode($response, true);
         curl_close($curl);
 
-        $DefaultAvatar = BotAvatar::where('bot_id', '=', $BotAndScenario->bid)
+        $DefaultAvatar = BotAvatar::where('teacher_id', '=', $BotAndScenario->teacher_id)
         ->where('protcol', '=', '0')
         ->first();
 
@@ -227,7 +228,7 @@ class ApiController extends Controller
         if (preg_match('/\\\s\d+/u', $expression, $matches)) {
             $expression = str_replace($matches[0], '', $expression);
             $protcol = str_replace('\s', '', $matches[0]);
-            $BotAvatar = BotAvatar::where('bot_id', '=', $BotAndScenario->bid)
+            $BotAvatar = BotAvatar::where('teacher_id', '=', $BotAndScenario->teacher_id)
             ->where('protcol', '=', (int)$protcol)
             ->first();
             if ($BotAvatar) {

@@ -57,4 +57,9 @@ class Teacher extends Authenticatable
     {
         return $this->belongsToMany('App\User', 'teacher_user_relations', 'teacher_id', 'user_id');
     }
+
+    public function Avatars()
+    {
+        return $this->hasMany('App\BotAvatar');
+    }
 }

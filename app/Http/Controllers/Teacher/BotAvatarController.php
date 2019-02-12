@@ -28,21 +28,23 @@ class BotAvatarController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($bot_id)
+    public function index()
     {
-        $BotAvatars = BotAvatar::join('talktags', 'bot_avatars.protcol', '=', 'talktags.protcol')
-        ->where('bot_avatars.bot_id', '=', $bot_id)
+        $Teacher = Auth::user();
+
+        $BotAvatars = BotAvatar::join('talktags', 'bot_avatars.emotion', '=', 'talktags.protcol')
         ->orderBy('bot_avatars.id', 'asc')
         ->select(
             'bot_avatars.id',
             'bot_avatars.filename',
             'bot_avatars.protcol',
+            'bot_avatars.emotion',
             'talktags.protcol_name'
         )
+        ->where('bot_avatars.teacher_id', '=', $Teacher->id)
         ->get();
 
         return view('teacher.bot_avatar')
-        ->with('bot_id', $bot_id)
         ->with('BotAvatars', $BotAvatars);
     }
 
@@ -51,13 +53,12 @@ class BotAvatarController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function registForm(Request $request, $bot_id)
+    public function registForm(Request $request)
     {
         $Talktags = Talktag::all();
 
         return view('teacher.bot_avatar_add')
-        ->with('Talktags', $Talktags)
-        ->with('bot_id', $bot_id);
+        ->with('Talktags', $Talktags);
     }
 
     /**
@@ -65,10 +66,12 @@ class BotAvatarController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function regist(Request $request, $bot_id)
+    public function regist(Request $request)
     {
+        $Teacher = Auth::user();
         $validatedData = $request->validate([
             'protcol' => 'required|string',
+            'emotion' => 'required|string',
             'avatar' => 'required|file|image',
         ]);
 
@@ -77,11 +80,12 @@ class BotAvatarController extends Controller
         $filename = array_pop($cutpath);
 
         $BotAvatars = BotAvatar::create([
-            'bot_id' => $bot_id,
             'protcol' => $request->input('protcol'),
+            'emotion' => $request->input('emotion'),
             'filename' => $filename,
+            'teacher_id' => $Teacher->id,
         ]);
-        return redirect()->route('teacher_bot_avatar', $bot_id);
+        return redirect()->route('teacher_bot_avatar');
     }
 
     /**
@@ -125,12 +129,12 @@ class BotAvatarController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function delete($bot_id, $avatar_id)
+    public function delete($avatar_id)
     {
         $BotAvatar = BotAvatar::find($avatar_id);
         // Storage::delete('public/bot/'.$BotAvatar->filename);
 
         $BotAvatar->delete();
-        return redirect()->route('teacher_bot_avatar', $bot_id);
+        return redirect()->route('teacher_bot_avatar');
     }
 }
