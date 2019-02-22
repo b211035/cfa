@@ -21,6 +21,8 @@
                         </div>
                     </div>
                     <div class="col"><a href="#" @click="log(user.id)">会話ログ確認</a></div>
+                    <div class="col" v-if="(user.next_stage || user.next_scenario_id)"><a href="#" @click="reset(user.id)">シナリオ進捗リセット</a></div>
+                    <div class="col" v-else>シナリオ進捗リセット</div>
                     <div class="col"><a href="#" @click="deluser(user.id)">削除</a></div>
                 </div>
             </template>
@@ -52,6 +54,14 @@
             },
             disable: function(id){
                 this.$http.post('/teacher/user/disable/' + id)
+                    .then(
+                        response =>  {
+                            this.user_list = response.data.user;
+                        }
+                    );
+            },
+            reset: function(id){
+                this.$http.post('/teacher/user/reset/' + id)
                     .then(
                         response =>  {
                             this.user_list = response.data.user;

@@ -44,9 +44,10 @@ class UserController extends Controller
             $join->on('teacher_user_relations.user_id', '=', 'users.id')
                 ->where('teacher_user_relations.teacher_id', '=', $Teacher->id);
         })
+        ->leftjoin('progress', 'users.id', '=', 'progress.user_id')
         ->whereNotNull('users.school_id')
         ->where('users.school_id', '=', $Teacher->school_id)
-        ->select('users.id', 'users.user_name', 'teacher_user_relations.teacher_id')
+        ->select('users.id', 'users.user_name', 'teacher_user_relations.teacher_id', 'next_stage', 'next_scenario_id')
         ->orderBy('users.id', 'asc')
         ->get();
     }
@@ -222,7 +223,7 @@ class UserController extends Controller
         fputcsv($stream, $csvHeader);
         foreach ($Logs as $Log) {
             $log = json_decode(json_encode($Log), true);
-            $log['scenario_name'] = "'".$log['scenario_name']; 
+            $log['scenario_name'] = "'".$log['scenario_name'];
             $log['sender_flg'] = ($log['sender_flg'] == 1) ? $log['bot_name'] : $log['user_name'];
             fputcsv($stream, $log);
         }
@@ -236,4 +237,26 @@ class UserController extends Controller
         );
         return Response::make($csv, 200, $headers);
     }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function resetProgress($user_id)
+    {
+        $User = User::find($user_id);
+        $Progress = $User->Progress;
+        if ($Progress) {
+            $Progress->next_scenario_id = null;
+            $Progress->next_stage = null;
+            $Progress->save();
+        }
+
+        $Teacher = Auth::user();
+        $Users = $this->getUserList($Teacher);
+        $result = ['user' => $Users];
+        return response()->json($result);
+    }
+
 }

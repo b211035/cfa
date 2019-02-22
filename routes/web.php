@@ -90,6 +90,7 @@ Route::prefix('teacher')->group(function () {
     Route::get('user/log/{id}/{scenario}/download', 'Teacher\UserController@logDownload')->name('teacher_user_log_scenario_download');
     Route::post('user/enable/{id}', 'Teacher\UserController@enable')->name('teacher_user_enable');
     Route::post('user/disable/{id}', 'Teacher\UserController@disable')->name('disaacher_user_enable');
+    Route::post('user/reset/{id}', 'Teacher\UserController@resetProgress')->name('teacher_user_reset');
     Route::post('user/delete/{id}', 'Teacher\UserController@delete')->name('teacher_user_delete');
 
     Route::get('login', 'Teacher\LoginController@showLoginForm')->name('teacher_login');
