@@ -47878,36 +47878,36 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         enable: function enable(id) {
             var _this = this;
 
-            this.$http.post('/teacher/user/enable/' + id).then(function (response) {
+            this.$http.post('user/enable/' + id).then(function (response) {
                 _this.user_list = response.data.user;
             });
         },
         disable: function disable(id) {
             var _this2 = this;
 
-            this.$http.post('/teacher/user/disable/' + id).then(function (response) {
+            this.$http.post('user/disable/' + id).then(function (response) {
                 _this2.user_list = response.data.user;
             });
         },
         reset: function reset(id) {
             var _this3 = this;
 
-            this.$http.post('/teacher/user/reset/' + id).then(function (response) {
+            this.$http.post('user/reset/' + id).then(function (response) {
                 _this3.user_list = response.data.user;
             });
         },
         deluser: function deluser(id) {
             var _this4 = this;
 
-            this.$http.post('/teacher/user/delete/' + id).then(function (response) {
+            this.$http.post('user/delete/' + id).then(function (response) {
                 _this4.user_list = response.data.user;
             });
         },
         log: function log(id) {
-            window.location.href = '/teacher/user/log/' + id;
+            window.location.href = 'user/log/' + id;
         },
         update: function update(id) {
-            window.location.href = '/teacher/user/update/' + id;
+            window.location.href = 'user/update/' + id;
         }
     },
     mounted: function mounted() {

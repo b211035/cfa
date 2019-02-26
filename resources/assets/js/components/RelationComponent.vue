@@ -47,7 +47,7 @@
         },
         methods: {
             enable: function(id){
-                this.$http.post('/teacher/user/enable/' + id)
+                this.$http.post('user/enable/' + id)
                     .then(
                         response =>  {
                             this.user_list = response.data.user;
@@ -55,7 +55,7 @@
                     );
             },
             disable: function(id){
-                this.$http.post('/teacher/user/disable/' + id)
+                this.$http.post('user/disable/' + id)
                     .then(
                         response =>  {
                             this.user_list = response.data.user;
@@ -63,7 +63,7 @@
                     );
             },
             reset: function(id){
-                this.$http.post('/teacher/user/reset/' + id)
+                this.$http.post('user/reset/' + id)
                     .then(
                         response =>  {
                             this.user_list = response.data.user;
@@ -71,7 +71,7 @@
                     );
             },
             deluser: function(id){
-                this.$http.post('/teacher/user/delete/' + id)
+                this.$http.post('user/delete/' + id)
                     .then(
                         response =>  {
                             this.user_list = response.data.user;
@@ -79,10 +79,10 @@
                     );
             },
             log: function(id){
-                window.location.href = '/teacher/user/log/' + id;
+                window.location.href = 'user/log/' + id;
             },
             update: function(id){
-                window.location.href = '/teacher/user/update/' + id;
+                window.location.href = 'user/update/' + id;
             }
         },
         mounted() {

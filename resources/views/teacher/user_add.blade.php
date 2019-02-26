@@ -98,7 +98,7 @@
 
                                     <div class="col-md-6">
                                         @php
-                                            $gradecalss = isset($User) ? $User->Classes->where('grade_id', $Grade->id)->first()->class_id : '';
+                                            $gradecalss = isset($User) && $User->Classes->where('grade_id', $Grade->id)->isNotEmpty() ? $User->Classes->where('grade_id', $Grade->id)->first()->class_id : '';
                                         @endphp
                                         <select id="gradecalsses" name="gradecalsses[{{ $Grade->id }}]" class="form-control{{ $errors->has('gradecalsses') ? ' is-invalid' : '' }}" >
                                             @foreach ($Teacher->School->Classes as $Class)
