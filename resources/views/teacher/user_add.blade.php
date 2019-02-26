@@ -48,28 +48,73 @@
                                 @endif
                             </div>
                         </div>
+                        @if (!isset($User))
+
+                            <div class="form-group row">
+                                <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
+
+                                <div class="col-md-6">
+                                    <input id="password" type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" required>
+
+                                    @if ($errors->has('password'))
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $errors->first('password') }}</strong>
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="password-confirm" class="col-md-4 col-form-label text-md-right">{{ __('Confirm Password') }}</label>
+
+                                <div class="col-md-6">
+                                    <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
+                                </div>
+                            </div>
+                        @endif
 
                         <div class="form-group row">
-                            <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
+                            <label for="admission_year" class="col-md-4 col-form-label text-md-right">{{ __('Admission Year') }}</label>
 
                             <div class="col-md-6">
-                                <input id="password" type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" required>
+                                @php
+                                    $admission_year = isset($User) ? $User->admission_year : '';
+                                @endphp
+                                <input id="admission_year" type="text" class="form-control{{ $errors->has('admission_year') ? ' is-invalid' : '' }}" name="admission_year" value="{{ old('admission_year', $admission_year) }}" required>
 
-                                @if ($errors->has('password'))
+                                @if ($errors->has('admission_year'))
                                     <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('password') }}</strong>
+                                        <strong>{{ $errors->first('admission_year') }}</strong>
                                     </span>
                                 @endif
                             </div>
                         </div>
 
-                        <div class="form-group row">
-                            <label for="password-confirm" class="col-md-4 col-form-label text-md-right">{{ __('Confirm Password') }}</label>
 
-                            <div class="col-md-6">
-                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
-                            </div>
-                        </div>
+                        @if ($Teacher->School && $Teacher->School->Grades->isNotEmpty() && $Teacher->School->Classes->isNotEmpty())
+                            @foreach ($Teacher->School->Grades as $Grade)
+                                <div class="form-group row">
+                                    <label for="gradecalsses[{{ $Grade->id }}]" class="col-md-4 col-form-label text-md-right">{{ $Grade->grade_name }}</label>
+
+                                    <div class="col-md-6">
+                                        @php
+                                            $gradecalss = isset($User) ? $User->Classes->where('grade_id', $Grade->id)->first()->class_id : '';
+                                        @endphp
+                                        <select id="gradecalsses" name="gradecalsses[{{ $Grade->id }}]" class="form-control{{ $errors->has('gradecalsses') ? ' is-invalid' : '' }}" >
+                                            @foreach ($Teacher->School->Classes as $Class)
+                                                <option value="{{ $Class->id }}" @if ($Class->id == old('gradecalsses', $gradecalss)) selected @endif>{{ $Class->class_name }}</option>
+                                            @endforeach
+                                        </select>
+
+                                        @if ($errors->has('gradecalsses'))
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $errors->first('gradecalsses') }}</strong>
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
 
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">

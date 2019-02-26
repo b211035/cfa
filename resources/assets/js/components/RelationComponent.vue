@@ -6,12 +6,14 @@
             <div class="col"></div>
             <div class="col"></div>
             <div class="col"></div>
+            <div class="col"></div>
         </div>
         <div>
             <template v-for="user in user_list">
                 <div class="row border-bottom">
                     <div class="col">{{ user.id }}</div>
                     <div class="col">{{ user.user_name }}</div>
+                    <div class="col"><a href="#" @click="update(user.id)">編集</a></div>
                     <div class="col">
                         <div v-if="user.teacher_id">
                             <a href="#" @click="disable(user.id)">生徒認証解除</a>
@@ -78,6 +80,9 @@
             },
             log: function(id){
                 window.location.href = '/teacher/user/log/' + id;
+            },
+            update: function(id){
+                window.location.href = '/teacher/user/update/' + id;
             }
         },
         mounted() {

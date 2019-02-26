@@ -92,6 +92,25 @@ Route::prefix('teacher')->group(function () {
     Route::post('user/disable/{id}', 'Teacher\UserController@disable')->name('disaacher_user_enable');
     Route::post('user/reset/{id}', 'Teacher\UserController@resetProgress')->name('teacher_user_reset');
     Route::post('user/delete/{id}', 'Teacher\UserController@delete')->name('teacher_user_delete');
+    Route::get('user/update/{id}', 'Teacher\UserController@updateForm')->name('teacher_user_update');
+    Route::post('user/update/{id}', 'Teacher\UserController@update');
+
+    Route::get('user/log/{user_id}/theme/{theme_id}', 'Teacher\UserController@ThemeAnswers')->name('teacher_user_theme_answer');
+
+
+    Route::get('theme', 'Teacher\ThemeController@index')->name('teacher_theme');
+    Route::get('theme/regist', 'Teacher\ThemeController@registForm')->name('teacher_theme_regist');
+    Route::post('theme/regist', 'Teacher\ThemeController@regist');
+    Route::get('theme/update/{id}', 'Teacher\ThemeController@updateForm')->name('teacher_theme_update');
+    Route::post('theme/update/{id}', 'Teacher\ThemeController@update');
+    Route::get('theme/delete/{id}', 'Teacher\ThemeController@delete')->name('teacher_theme_delete');
+
+    Route::get('theme/{theme_id}/question', 'Teacher\QuestionController@index')->name('teacher_question');
+    Route::get('theme/{theme_id}/question/regist', 'Teacher\QuestionController@registForm')->name('teacher_question_regist');
+    Route::post('theme/{theme_id}/question/regist', 'Teacher\QuestionController@regist');
+    Route::get('theme/{theme_id}/question/delete/{id}', 'Teacher\QuestionController@delete')->name('teacher_question_delete');
+
+    Route::get('manage/school', 'Teacher\SchoolController@index')->name('teacher_manage_school');
 
     Route::get('login', 'Teacher\LoginController@showLoginForm')->name('teacher_login');
     Route::post('login', 'Teacher\LoginController@login');
@@ -116,6 +135,16 @@ Route::prefix('admin')->group(function () {
     Route::get('school/regist', 'Admin\SchoolController@registForm')->name('admin_school_regist');
     Route::post('school/regist', 'Admin\SchoolController@regist');
     Route::get('school/delete/{id}', 'Admin\SchoolController@delete')->name('admin_school_delete');
+
+    Route::get('school/{school_id}/grade', 'Admin\GradeController@index')->name('admin_grade');
+    Route::get('school/{school_id}/grade/regist', 'Admin\GradeController@registForm')->name('admin_grade_regist');
+    Route::post('school/{school_id}/grade/regist', 'Admin\GradeController@regist');
+    Route::get('school/{school_id}/grade/delete/{id}', 'Admin\GradeController@delete')->name('admin_grade_delete');
+
+    Route::get('school/{school_id}/class', 'Admin\ClassController@index')->name('admin_class');
+    Route::get('school/{school_id}/class/regist', 'Admin\ClassController@registForm')->name('admin_class_regist');
+    Route::post('school/{school_id}/class/regist', 'Admin\ClassController@regist');
+    Route::get('school/{school_id}/class/delete/{id}', 'Admin\ClassController@delete')->name('admin_class_delete');
 
     Route::get('talktag', 'Admin\TalktagController@index')->name('admin_talktagtype');
     Route::get('talktag/{type_id}', 'Admin\TalktagController@talktag')->name('admin_talktag');

@@ -11,6 +11,13 @@
                     <p>
                         <a href="{{ route('teacher_user_log_scenario_download', [$User->id, 0]) }}" class="btn btn-primary" target="_blank">全ログダウンロード</a>
                     </p>
+                    @if ($Themes->isNotEmpty())
+                        @foreach ($Themes as $Theme)
+                            <a href="{{ route('teacher_user_theme_answer', [$User->id, $Theme->id]) }}" class="" >{{ $Theme->theme_name }}</a>
+                        @endforeach
+                    @endif
+
+
                     @if ($Scenarios->isNotEmpty())
                             <div class="row border-bottom border-top">
                                 <div class="col">シナリオ</div>

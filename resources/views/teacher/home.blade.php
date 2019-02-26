@@ -12,8 +12,10 @@
                         <li><a href="{{ route('teacher_profile') }}">プロフィール設定</a></li>
                         <li><a href="{{ route('teacher_user') }}">ユーザー</a></li>
                         <li><a href="{{ route('teacher_bot') }}">ボット</a></li>
+                        <li><a href="{{ route('teacher_theme') }}">テーマ</a></li>
                         <li><a href="{{ route('teacher_stage') }}">ステージ</a></li>
                         <li><a href="{{ route('teacher_scenario') }}">シナリオ</a></li>
+                        <li><a href="{{ route('teacher_manage_school') }}">学校管理画面</a></li>
                     </ul>
                 </div>
             </div>

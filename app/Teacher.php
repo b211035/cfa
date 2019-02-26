@@ -62,4 +62,9 @@ class Teacher extends Authenticatable
     {
         return $this->hasMany('App\BotAvatar');
     }
+
+    public function Themes()
+    {
+        return $this->hasMany('App\Theme');
+    }
 }

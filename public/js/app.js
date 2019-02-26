@@ -47859,6 +47859,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: {
@@ -47903,6 +47905,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         log: function log(id) {
             window.location.href = '/teacher/user/log/' + id;
+        },
+        update: function update(id) {
+            window.location.href = '/teacher/user/update/' + id;
         }
     },
     mounted: function mounted() {
@@ -47932,6 +47937,21 @@ var render = function() {
                   _vm._v(" "),
                   _c("div", { staticClass: "col" }, [
                     _vm._v(_vm._s(user.user_name))
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col" }, [
+                    _c(
+                      "a",
+                      {
+                        attrs: { href: "#" },
+                        on: {
+                          click: function($event) {
+                            _vm.update(user.id)
+                          }
+                        }
+                      },
+                      [_vm._v("編集")]
+                    )
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "col" }, [
@@ -48032,6 +48052,8 @@ var staticRenderFns = [
       _c("div", { staticClass: "col" }, [_vm._v("ID")]),
       _vm._v(" "),
       _c("div", { staticClass: "col" }, [_vm._v("生徒名")]),
+      _vm._v(" "),
+      _c("div", { staticClass: "col" }),
       _vm._v(" "),
       _c("div", { staticClass: "col" }),
       _vm._v(" "),

@@ -17,6 +17,8 @@ use App\Finished;
 use App\Stop;
 use App\Stage;
 use App\Progress;
+use App\Question;
+use App\Answer;
 
 class ApiController extends Controller
 {
@@ -42,6 +44,7 @@ class ApiController extends Controller
         ->where('bots.bot_id', '=', $request->input('bot_id'))
         ->where('scenarios.scenario_id', '=', $request->input('scenario_id'))
         ->select(
+            'scenarios.stage_id',
             'scenarios.teacher_id',
             'scenarios.id as sid',
             'scenarios.scenario_id',
@@ -81,6 +84,22 @@ class ApiController extends Controller
                 'avater_image' => $user_image,
                 'send_date' => $Date->format('Y-m-d H:i:s')
             ]);
+
+            if ($request->session()->has('question')) {
+                $question_id = $request->session()->get('question');
+                $Answer = Answer::where('user_id', $User->id)
+                    ->where('question_id', $question_id)
+                    ->first();
+                if (!$Answer) {
+                    Answer::create([
+                        'user_id' => $User->id,
+                        'question_id' => $question_id,
+                        'answer' => $save_contents,
+                    ]);
+                }
+                $request->session()->forget('question');
+            }
+
         } else {
             DB::table('stops')->where('user_id', $User->id)
                 ->where('scenario_id', $BotAndScenario->sid)
@@ -235,6 +254,23 @@ class ApiController extends Controller
                 $result['avatarImage'] = route('root') . '/storage/bot/'.$BotAvatar->filename;
             }
         }
+
+
+        if (preg_match('/\\\q\d+/u', $expression, $matches)) {
+            $expression = str_replace($matches[0], '', $expression);
+            $protcol = str_replace('\q', '', $matches[0]);
+
+            $Stage = Stage::find($BotAndScenario->stage_id);
+
+            $Question = Question::where('question_type', '=', '2')
+            ->where('protcol', '=', $protcol)
+            ->where('theme_id', '=', $Stage->Theme->id)
+            ->first();
+            if ($Question) {
+                $request->session()->put('question', $Question->id);
+            }
+        }
+
 
         $expression = str_replace('\n', '<br>', $expression);
 

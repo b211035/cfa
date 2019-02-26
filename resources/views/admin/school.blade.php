@@ -16,11 +16,15 @@
                                 <div class="col">ID</div>
                                 <div class="col">{{ __('Schoolname') }}</div>
                                 <div class="col"></div>
+                                <div class="col"></div>
+                                <div class="col"></div>
                             </div>
                         @foreach ($Schools as $School)
                             <div class="row border-bottom">
                                 <div class="col">{{ $School->id }}</div>
                                 <div class="col">{{ $School->school_name }}</div>
+                                <div class="col"><a href="{{ route('admin_grade', $School->id) }}">学年</a></div>
+                                <div class="col"><a href="{{ route('admin_class', $School->id) }}">クラス</a></div>
                                 <div class="col"><a href="{{ route('admin_school_delete', $School->id) }}">削除</a></div>
                             </div>
                         @endforeach

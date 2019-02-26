@@ -21,7 +21,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'login_id', 'password', 'user_name', 'cfa_flg', 'school_id'
+        'login_id', 'password', 'user_name', 'cfa_flg', 'school_id', 'admission_year'
     ];
 
     /**
@@ -57,4 +57,10 @@ class User extends Authenticatable
     {
         return $this->belongsToMany('App\Teacher', 'teacher_user_relations', 'user_id', 'teacher_id');
     }
+
+    public function Classes()
+    {
+        return $this->hasMany('App\UserClass');
+    }
+
 }

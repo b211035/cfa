@@ -9,8 +9,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Response;
 use App\User;
+use App\UserClass;
 use App\Scenario;
 use App\Log;
+use App\Theme;
+use App\Question;
+use App\Answer;
 
 class UserController extends Controller
 {
@@ -113,7 +117,10 @@ class UserController extends Controller
      */
     public function registForm(Request $request)
     {
-        return view('teacher.user_add');
+        $Teacher = Auth::user();
+
+        return view('teacher.user_add')
+        ->with('Teacher', $Teacher);
     }
 
     /**
@@ -127,6 +134,7 @@ class UserController extends Controller
             'login_id' => 'unique:users|required|string|max:255',
             'user_name' => 'required|string|max:255',
             'password' => 'required|string|min:6|confirmed',
+            'admission_year' => 'required|integer',
         ]);
 
         $Teacher = Auth::user();
@@ -134,15 +142,74 @@ class UserController extends Controller
             'login_id' => $request->input('login_id'),
             'user_name' => $request->input('user_name'),
             'password' => Hash::make($request->input('password')),
+            'admission_year' => $request->input('admission_year'),
             'cfa_flg' => 0,
             'school_id' => $Teacher->school_id,
         ]);
+
+        $gradecalsses = $request->input('gradecalsses');
+        foreach ($gradecalsses as $key => $value) {
+            $UserClass = UserClass::create([
+                'user_id' => $User->id,
+                'grade_id' => $key,
+                'class_id' => $value,
+            ]);
+        }
 
         $Teacher->Users()->attach($User->id);
 
         return redirect()->route('teacher_user');
     }
 
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function updateForm(Request $request, $id)
+    {
+        $Teacher = Auth::user();
+        $User = User::find($id);
+        return view('teacher.user_add')
+        ->with('Teacher', $Teacher)
+        ->with('User', $User);
+    }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        $validatedData = $request->validate([
+            'user_name' => 'required|string|max:255',
+            'admission_year' => 'required|integer',
+        ]);
+
+        $User = User::find($id);
+        $User->user_name = $request->input('user_name');
+        $User->admission_year = $request->input('admission_year');
+        $User->save();
+
+
+        $gradecalsses = $request->input('gradecalsses');
+        foreach ($gradecalsses as $key => $value) {
+            $UserClass = $User->Classes->where('grade_id', $key)->first();
+            if ($UserClass) {
+                $UserClass->class_id = $value;
+                $UserClass->save();
+            } else {
+                $UserClass = UserClass::create([
+                    'user_id' => $User->id,
+                    'grade_id' => $key,
+                    'class_id' => $value,
+                ]);
+            }
+        }
+
+        return redirect()->route('teacher_user');
+    }
     /**
      * Show the application dashboard.
      *
@@ -159,8 +226,12 @@ class UserController extends Controller
         )
         ->get();
 
+        $Teacher = Auth::user();
+        $Themes = $Teacher->Themes;
+
         return view('teacher.log')
         ->with('User', $User)
+        ->with('Themes', $Themes)
         ->with('Scenarios', $Scenarios);
     }
 
@@ -259,4 +330,87 @@ class UserController extends Controller
         return response()->json($result);
     }
 
+    public function ThemeAnswers($user_id, $theme_id){
+        $Teacher = Auth::user();
+        $User = User::find($user_id);
+        $Theme = Theme::find($theme_id);
+
+        $ReplValQuestions = $Theme->Questions()->where('question_type', 1)->get();
+
+        $Repluser = $User->Replusers()->first();// tod
+        $header = ['Content-Type: application/json', 'x-api-key: XqKQtGVqUC9nkXpWKofAg7EdCyzSPNqbagxPXiXR'];// tod
+        $body = [
+            'appUserId' => $Repluser->repl_user_id,
+            'botId' => 'sample',// tod
+            'voiceText' => 'init',
+            'initTalkingFlag' => true,
+            'initTopicId' => $Theme->answer_scenario_id,
+        ];
+
+        $option = [
+            CURLOPT_URL => 'https://api.repl-ai.jp/v1/dialogue',
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_HTTPHEADER => $header,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POSTFIELDS => json_encode($body),
+        ];
+        $curl = curl_init();
+
+        foreach ($ReplValQuestions as $ReplValQuestion) {
+            curl_setopt_array($curl, $option);
+            $response = curl_exec($curl);
+            $result = json_decode($response, true);
+
+            $Answer = Answer::where('user_id', $User->id)
+                ->where('question_id', $ReplValQuestion->id)
+                ->first();
+            if (!$Answer) {
+                Answer::create([
+                    'user_id' => $User->id,
+                    'question_id' => $ReplValQuestion->id,
+                    'answer' => $result['systemText']['expression'],
+                ]);
+            }
+            $body = [
+                'appUserId' => $Repluser->repl_user_id,
+                'botId' => 'sample',// tod
+                'voiceText' => 'next',
+            ];
+            $option = [CURLOPT_POSTFIELDS => json_encode($body)];
+        }
+
+        $LogQuestions = $Theme->Questions()->where('question_type', 3)->get();
+
+        foreach ($LogQuestions as $LogQuestion) {
+            $Answer = Answer::where('user_id', $User->id)
+                ->where('question_id', $LogQuestion->id)
+                ->first();
+            if (!$Answer) {
+                $targetLog = Log::where('contents', 'like', '%'.$LogQuestion->protcol.'%')
+                ->where('sender_flg', 1)
+                ->latest('id')
+                ->first();
+
+                $AnswerLog = Log::where('id', '>', $targetLog->id)
+                ->where('sender_flg', 0)
+                ->oldest('id')
+                ->first();
+
+                Answer::create([
+                    'user_id' => $User->id,
+                    'question_id' => $LogQuestion->id,
+                    'answer' => $AnswerLog->contents,
+                ]);
+            }
+        }
+
+        $QandA = Question::leftJoin('answers', 'answers.question_id', '=', 'questions.id')
+                ->where('user_id', $User->id)
+                ->orderBy('questions.id', 'asc')
+                ->get();
+
+        return view('teacher.answers')
+        ->with('User', $User)
+        ->with('QandA', $QandA);
+    }
 }

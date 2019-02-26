@@ -5,9 +5,10 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class School extends Model
+class Theme extends Model
 {
     use SoftDeletes;
+
     //
     public $timestamps = false;
 
@@ -19,27 +20,21 @@ class School extends Model
      * @var array
      */
     protected $fillable = [
-        'school_name'
+        'teacher_id', 'theme_name'
     ];
 
-
-    public function Grades()
+    public function Teacher()
     {
-        return $this->hasMany('App\Grade');
+        return $this->belongsTo('App\Teacher');
     }
 
-    public function Classes()
+    public function Stages()
     {
-        return $this->hasMany('App\GradeClass');
+        return $this->hasMany('App\Stage');
     }
 
-    public function Teachers()
+    public function Questions()
     {
-        return $this->hasMany('App\Teacher');
-    }
-
-    public function Users()
-    {
-        return $this->hasMany('App\User');
+        return $this->hasMany('App\Question');
     }
 }

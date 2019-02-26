@@ -9,25 +9,24 @@
 
                 <div class="card-body">
                     <p>
-                        <a href="{{ route('teacher_stage_regist') }}" class="btn btn-primary">学習ステージ追加</a>
+                        <a href="{{ route('teacher_theme_regist') }}" class="btn btn-primary">学習テーマ追加</a>
                     </p>
-                    @if ($Stages->isNotEmpty())
+                    @if ($Themes->isNotEmpty())
                             <div class="row border-bottom border-top">
                                 <div class="col">ID</div>
-                                <div class="col">{{ __('Stagename') }}</div>
                                 <div class="col">{{ __('Themename') }}</div>
                                 <div class="col"></div>
                                 <div class="col"></div>
                                 <div class="col"></div>
+                                <div class="col"></div>
                             </div>
-                        @foreach ($Stages as $Stage)
+                        @foreach ($Themes as $Theme)
                             <div class="row border-bottom">
-                                <div class="col">{{ $Stage->id }}</div>
-                                <div class="col">{{ $Stage->stage_name }}</div>
-                                <div class="col">@if ($Stage->Theme) {{ $Stage->Theme->theme_name }} @endif</div>
-                                <div class="col"><a href="{{ route('teacher_stage_update', $Stage->id) }}">編集</a></div>
-                                <div class="col"><a href="{{ route('teacher_stage_delete', $Stage->id) }}">削除</a></div>
-                                <div class="col"><a href="{{ route('teacher_next_stage', $Stage->id) }}">遷移先シナリオ設定</a></div>
+                                <div class="col">{{ $Theme->id }}</div>
+                                <div class="col">{{ $Theme->theme_name }}</div>
+                                <div class="col"><a href="{{ route('teacher_theme_update', $Theme->id) }}">編集</a></div>
+                                <div class="col"><a href="{{ route('teacher_question', $Theme->id) }}">質問登録</a></div>
+                                <div class="col"><a href="{{ route('teacher_theme_delete', $Theme->id) }}">削除</a></div>
                             </div>
                         @endforeach
                     @endif

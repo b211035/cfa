@@ -20,7 +20,7 @@ class Stage extends Model
      * @var array
      */
     protected $fillable = [
-        'teacher_id', 'stage_name'
+        'teacher_id', 'stage_name', 'theme_id'
     ];
 
     public function Teacher()
@@ -31,6 +31,11 @@ class Stage extends Model
     public function Scenarios()
     {
         return $this->hasMany('App\Scenario');
+    }
+
+    public function Theme()
+    {
+        return $this->belongsTo('App\Theme');
     }
 
     public function NextStages()

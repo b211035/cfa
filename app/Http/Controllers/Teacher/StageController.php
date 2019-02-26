@@ -44,7 +44,11 @@ class StageController extends Controller
      */
     public function registForm(Request $request)
     {
-        return view('teacher.stage_add');
+        $Teacher = Auth::user();
+        $Themes = $Teacher->Themes;
+
+        return view('teacher.stage_add')
+        ->with('Themes', $Themes);
     }
 
     /**
@@ -56,12 +60,14 @@ class StageController extends Controller
     {
         $validatedData = $request->validate([
             'stage_name' => 'required|string|max:255',
+            'theme_id' => 'required|exists:themes,id',
         ]);
 
         $Teacher = Auth::user();
         $Stage = Stage::create([
             'teacher_id' => $Teacher->id,
             'stage_name' => $request->input('stage_name'),
+            'theme_id' => $request->input('theme_id'),
         ]);
 
         return redirect()->route('teacher_stage');
@@ -74,9 +80,13 @@ class StageController extends Controller
      */
     public function updateForm(Request $request, $id)
     {
+        $Teacher = Auth::user();
+        $Themes = $Teacher->Themes;
+
         $Stage = Stage::find($id);
         return view('teacher.stage_add')
-        ->with('Stage', $Stage);
+        ->with('Stage', $Stage)
+        ->with('Themes', $Themes);
     }
 
     /**
@@ -88,10 +98,12 @@ class StageController extends Controller
     {
         $validatedData = $request->validate([
             'stage_name' => 'required|string|max:255',
+            'theme_id' => 'required|exists:themes,id',
         ]);
 
         $Stage = Stage::find($id);
         $Stage->stage_name = $request->input('stage_name');
+        $Stage->theme_id = $request->input('theme_id');
         $Stage->save();
 
         return redirect()->route('teacher_stage');

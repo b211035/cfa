@@ -9,6 +9,7 @@ use App\Scenario;
 use App\Bot;
 use App\Repluser;
 use App\School;
+use App\Theme;
 use App\Stage;
 use App\Log;
 use App\Finished;
@@ -36,29 +37,30 @@ class HomeController extends Controller
     {
         $User = Auth::user();
 
-        $Stages = Stage::with('Scenarios')
-        ->join('teacher_user_relations', 'teacher_user_relations.teacher_id', '=', 'stages.teacher_id')
-        ->where('teacher_user_relations.user_id', '=', $User->id)
-        ->select(
-            'stages.id',
-            'stages.stage_name'
-        )
+        $Themes = Theme::join('teacher_user_relations', function ($join) {
+            $User = Auth::user();
+            $join->on('teacher_user_relations.teacher_id', '=', 'themes.teacher_id')
+                 ->where('teacher_user_relations.user_id', '=', $User->id);
+        })
+        ->with('Stages')
+        ->select(['themes.*'])
         ->get();
 
-        foreach ($Stages as $Stage) {
-            $matrix =  [];
-            foreach ($Stage->Scenarios as $Scenario) {
-                $Scenario->haslog = Log::where('user_id', $User->id)
-                    ->where('scenario_id', $Scenario->id)
-                    ->exists();
-                $Scenario->finished = Finished::where('user_id', $User->id)
-                    ->where('scenario_id', $Scenario->id)
-                    ->exists();
-                $matrix[$Scenario->times] = $Scenario;
+        foreach ($Themes as $Theme) {
+            foreach ($Theme->Stages as $Stage) {
+                $matrix =  [];
+                foreach ($Stage->Scenarios as $Scenario) {
+                    $Scenario->haslog = Log::where('user_id', $User->id)
+                        ->where('scenario_id', $Scenario->id)
+                        ->exists();
+                    $Scenario->finished = Finished::where('user_id', $User->id)
+                        ->where('scenario_id', $Scenario->id)
+                        ->exists();
+                    $matrix[$Scenario->times] = $Scenario;
+                }
+                $Stage->matrix = $matrix;
             }
-            $Stage->matrix = $matrix;
         }
-
         $LastScenarios = Scenario::join('logs', 'scenarios.id', '=', 'logs.scenario_id')
         ->select(
             'scenarios.id',
@@ -75,9 +77,8 @@ class HomeController extends Controller
             ]);
         }
 
-
         return view('home')
-        ->with('Stages', $Stages)
+        ->with('Themes', $Themes)
         ->with('Progress', $Progress)
         ->with('LastScenarios', $LastScenarios);
     }
