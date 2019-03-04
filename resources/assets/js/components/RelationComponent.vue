@@ -77,7 +77,8 @@
                     );
             },
             log: function(id){
-                window.location.href = '/teacher/user/log/' + id;
+                window.open('/teacher/user/log/' + id);
+                // window.location.href = '/teacher/user/log/' + id;
             }
         },
         mounted() {

@@ -47902,7 +47902,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             });
         },
         log: function log(id) {
-            window.location.href = '/teacher/user/log/' + id;
+            window.open('/teacher/user/log/' + id);
+            // window.location.href = '/teacher/user/log/' + id;
         }
     },
     mounted: function mounted() {
