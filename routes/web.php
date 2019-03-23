@@ -111,6 +111,9 @@ Route::prefix('teacher')->group(function () {
     Route::get('theme/{theme_id}/question/delete/{id}', 'Teacher\QuestionController@delete')->name('teacher_question_delete');
 
     Route::get('manage/school', 'Teacher\SchoolController@index')->name('teacher_manage_school');
+    Route::get('manage/school/theme/{theme_id}', 'Teacher\SchoolController@ThemeAnswers')->name('teacher_manage_school_theme_answer');
+    Route::get('manage/school/{year}/{grade_id}/{class_id}', 'Teacher\SchoolController@List')->name('teacher_manage_school_list');
+    Route::get('manage/school/{year}/{grade_id}/{class_id}/theme/{theme_id}', 'Teacher\SchoolController@ListThemeAnswers')->name('teacher_manage_school_theme_list_answer');
 
     Route::get('login', 'Teacher\LoginController@showLoginForm')->name('teacher_login');
     Route::post('login', 'Teacher\LoginController@login');

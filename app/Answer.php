@@ -23,4 +23,14 @@ class Answer extends Model
         'question_id', 'user_id', 'answer'
     ];
 
+    public function Question()
+    {
+        return $this->belongsTo('App\Question');
+    }
+
+    public function User()
+    {
+        return $this->belongsTo('App\User');
+    }
+
 }

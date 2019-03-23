@@ -334,14 +334,16 @@ class UserController extends Controller
         $Teacher = Auth::user();
         $User = User::find($user_id);
         $Theme = Theme::find($theme_id);
+        $Bot = $Theme->Stages()->first()->Scenarios()->first()->Bot;
 
         $ReplValQuestions = $Theme->Questions()->where('question_type', 1)->get();
 
-        $Repluser = $User->Replusers()->first();// tod
-        $header = ['Content-Type: application/json', 'x-api-key: XqKQtGVqUC9nkXpWKofAg7EdCyzSPNqbagxPXiXR'];// tod
+        $Repluser = $User->Replusers()->where('bot_id', $Bot->id)->first();
+        $header = ['Content-Type: application/json', 'x-api-key: '. $Bot->api_key .''];
+
         $body = [
             'appUserId' => $Repluser->repl_user_id,
-            'botId' => 'sample',// tod
+            'botId' => $Bot->bot_id,
             'voiceText' => 'init',
             'initTalkingFlag' => true,
             'initTopicId' => $Theme->answer_scenario_id,
@@ -373,7 +375,7 @@ class UserController extends Controller
             }
             $body = [
                 'appUserId' => $Repluser->repl_user_id,
-                'botId' => 'sample',// tod
+                'botId' => $Bot->bot_id,
                 'voiceText' => 'next',
             ];
             $option = [CURLOPT_POSTFIELDS => json_encode($body)];
@@ -404,7 +406,7 @@ class UserController extends Controller
             }
         }
 
-        $QandA = Question::leftJoin('answers', 'answers.question_id', '=', 'questions.id')
+        $QandA = $Theme->Questions()->leftJoin('answers', 'answers.question_id', '=', 'questions.id')
                 ->where('user_id', $User->id)
                 ->orderBy('questions.id', 'asc')
                 ->get();

@@ -15,13 +15,17 @@
                                     $startYear = date('Y');
                                 @endphp
                                 @for ($i = $startYear; $startYear - $i < 10 ; $i--)
-                                <h2>{{ $i }}年</h2>
+                                <h2>{{ $i }}年度</h2>
                                 @foreach ($Teacher->School->Grades as $Grade)
                                     <div class="row">
                                         <div class="col">{{ $Grade->grade_name }}</div>
-                                        <div class="col">全クラス</div>
+                                        <div class="col">
+                                            <a href="{{ route('teacher_manage_school_list', [$i, $Grade->id, 0]) }}">全クラス</a>
+                                        </div>
                                         @foreach ($Teacher->School->Classes as $Class)
-                                            <div class="col">{{ $Class->class_name }}</div>
+                                            <div class="col">
+                                                <a href="{{ route('teacher_manage_school_list', [$i, $Grade->id, $Class->id]) }}">{{ $Class->class_name }}</a>
+                                            </div>
                                         @endforeach
                                     </div>
                                 @endforeach
@@ -33,7 +37,9 @@
                             @if ($Teacher->Themes->isNotEmpty())
                                 <ul>
                                 @foreach ($Teacher->Themes as $Theme)
-                                    <li>{{ $Theme->theme_name }}</li>
+                                    <li>
+                                        <a href="{{ route('teacher_manage_school_theme_answer', $Theme->id) }}">{{ $Theme->theme_name }}</a>
+                                    </li>
                                 @endforeach
                                 </ul>
                             @endif
