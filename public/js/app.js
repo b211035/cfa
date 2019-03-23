@@ -47904,7 +47904,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             });
         },
         log: function log(id) {
-            window.location.href = 'user/log/' + id;
+            window.open('user/log/' + id);
+            // window.location.href = 'user/log/' + id;
         },
         update: function update(id) {
             window.location.href = 'user/update/' + id;

@@ -79,7 +79,8 @@
                     );
             },
             log: function(id){
-                window.location.href = 'user/log/' + id;
+                window.open('user/log/' + id);
+                // window.location.href = 'user/log/' + id;
             },
             update: function(id){
                 window.location.href = 'user/update/' + id;
