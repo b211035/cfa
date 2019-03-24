@@ -219,7 +219,10 @@ class SchoolController extends Controller
             }
         }
 
-        return view('teacher.theme_answers')
+        return view('teacher.theme_list_answers')
+        ->with('year', $year)
+        ->with('grade_id', $grade_id)
+        ->with('class_id', $class_id)
         ->with('Users', $Users)
         ->with('Theme', $Theme);
     }

@@ -10,7 +10,7 @@ class Answer extends Model
     use SoftDeletes;
 
     //
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $dates = ['deleted_at'];
 
