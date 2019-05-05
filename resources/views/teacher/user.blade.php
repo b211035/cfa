@@ -10,6 +10,7 @@
                 <div class="card-body">
                     <p>
                         <a href="{{ route('teacher_user_regist') }}" class="btn btn-primary">生徒追加</a>
+                        <a href="{{ route('teacher_user_stage_check') }}" class="btn btn-primary">ステージ確認</a>
                     </p>
                     <relation-component
                         users = @json($Users)

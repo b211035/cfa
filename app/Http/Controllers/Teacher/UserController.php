@@ -415,4 +415,25 @@ class UserController extends Controller
         ->with('User', $User)
         ->with('QandA', $QandA);
     }
+
+    public function stageCheck()
+    {
+        $Teacher = Auth::user();
+
+        $first = $Teacher->Stages()
+                ->Join('progress', 'progress.next_stage', '=', 'stages.id')
+                ->Join('users', 'users.id', '=', 'progress.user_id')
+                ->select('stages.id as stage_id', 'stages.*', 'users.id as user_id', 'users.*');
+        $stages = $Teacher->Stages()
+                ->Join('scenarios', 'scenarios.stage_id', '=', 'stages.id')
+                ->Join('progress', 'progress.next_scenario_id', '=', 'scenarios.id')
+                ->Join('users', 'users.id', '=', 'progress.user_id')
+                ->select('stages.id as stage_id', 'stages.*', 'users.id as user_id', 'users.*')
+                ->union($first)
+                ->orderBy('stage_id', 'asc')
+                ->get();
+// dd($stages);
+        return view('teacher.user_stage_check')
+        ->with('stages', $stages);
+    }
 }

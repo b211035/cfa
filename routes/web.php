@@ -97,6 +97,8 @@ Route::prefix('teacher')->group(function () {
 
     Route::get('user/log/{user_id}/theme/{theme_id}', 'Teacher\UserController@ThemeAnswers')->name('teacher_user_theme_answer');
 
+    Route::get('user/stage_check', 'Teacher\UserController@stageCheck')->name('teacher_user_stage_check');
+
 
     Route::get('theme', 'Teacher\ThemeController@index')->name('teacher_theme');
     Route::get('theme/regist', 'Teacher\ThemeController@registForm')->name('teacher_theme_regist');
