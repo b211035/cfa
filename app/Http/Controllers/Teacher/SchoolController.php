@@ -16,6 +16,7 @@ use App\School;
 use App\Theme;
 use App\Answer;
 use App\UserClass;
+use App\Log;
 
 class SchoolController extends Controller
 {
