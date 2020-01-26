@@ -15,7 +15,7 @@ class UpdateRepluser extends Migration
     {
         //
         Schema::table('replusers', function (Blueprint $table) {
-            $table->dropColumn('bot_id');
+            $table->dropColumn('group_id');
             $table->string('repl_group_id')->nullable();
         });
     }
