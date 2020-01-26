@@ -79,6 +79,7 @@
             logs: [String],
             log_list: [Object],
             user_id: [String, Number],
+            group_id: [String, Number],
             bot_id: [String, Number],
             scenario_id: [String, Number],
             haslog: [String, Number],
@@ -92,6 +93,7 @@
                 readonly: false,
                 params: {
                     user_id: this.user_id,
+                    group_id: this.group_id,
                     bot_id: this.bot_id,
                     scenario_id: this.scenario_id,
                     contents: ''

@@ -8,6 +8,7 @@
                     <talk-component
                         logs = '@json($Logs)'
                         user_id ="{{ $Repluser->repl_user_id }}"
+                        group_id ="{{ $Repluser->group_id }}"
                         bot_id ="{{ $Bot->bot_id }}"
                         scenario_id ="{{ $Scenario->scenario_id }}"
                         haslog = '{{ $Scenario->haslog }}'

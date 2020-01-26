@@ -12,7 +12,7 @@ class TalkTagTableSeeder extends Seeder
     public function run()
     {
         //
-        DB::table('talktagtype')->insert(
+        DB::table('talktagtypes')->insert(
             [
                 'protcol_name' => '表情',
                 'protcol' => '\s',

@@ -109,6 +109,7 @@ class ApiController extends Controller
         $header = ['Content-Type: application/json', 'x-api-key: '.$api_key];
         $body = [
             'appUserId' => $Repluser->repl_user_id,
+            'appUserId' => $Repluser->group_id,
             'botId' => $BotAndScenario->bot_id,
             'voiceText' => $contents,
             'initTalkingFlag' => ($contents == 'init') ?? true || false,
@@ -118,7 +119,7 @@ class ApiController extends Controller
         }
 
         $option = [
-            CURLOPT_URL => 'https://api.repl-ai.jp/v1/dialogue',
+            CURLOPT_URL => 'http://replcopy.azurewebsites.net/api/dialogue',
             CURLOPT_CUSTOMREQUEST => 'POST',
             CURLOPT_HTTPHEADER => $header,
             CURLOPT_RETURNTRANSFER => true,
@@ -520,7 +521,7 @@ class ApiController extends Controller
                 $body = ['botId' => $Bot->bot_id];
 
                 $option = [
-                    CURLOPT_URL => 'https://api.repl-ai.jp/v1/registration',
+                    CURLOPT_URL => 'http://replcopy.azurewebsites.net/api/registration',
                     CURLOPT_CUSTOMREQUEST => 'POST',
                     CURLOPT_HTTPHEADER => $header,
                     CURLOPT_RETURNTRANSFER => true,

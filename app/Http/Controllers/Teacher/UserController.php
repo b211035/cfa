@@ -350,7 +350,7 @@ class UserController extends Controller
         ];
 
         $option = [
-            CURLOPT_URL => 'https://api.repl-ai.jp/v1/dialogue',
+            CURLOPT_URL => 'http://replcopy.azurewebsites.net/api/dialogue',
             CURLOPT_CUSTOMREQUEST => 'POST',
             CURLOPT_HTTPHEADER => $header,
             CURLOPT_RETURNTRANSFER => true,

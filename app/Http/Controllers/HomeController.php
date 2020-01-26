@@ -106,7 +106,7 @@ class HomeController extends Controller
             $body = ['botId' => $Bot->bot_id];
 
             $option = [
-                CURLOPT_URL => 'https://api.repl-ai.jp/v1/registration',
+                CURLOPT_URL => 'http://replcopy.azurewebsites.net/api/registration',
                 CURLOPT_CUSTOMREQUEST => 'POST',
                 CURLOPT_HTTPHEADER => $header,
                 CURLOPT_RETURNTRANSFER => true,
@@ -124,6 +124,28 @@ class HomeController extends Controller
                 'bot_id' => $Bot->id,
                 'repl_user_id' => $result['appUserId'],
             ]);
+        }
+
+        if (!$Repluser->group_id) {
+            $api_key = $Bot->api_key;
+            $header = ['Content-Type: application/json', 'x-api-key: '.$api_key];
+            $body = ['botId' => $Bot->bot_id];
+
+            $option = [
+                CURLOPT_URL => 'http://replcopy.azurewebsites.net/api/addgroup',
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_HTTPHEADER => $header,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_POSTFIELDS => json_encode($body),
+            ];
+
+            $curl = curl_init();
+            curl_setopt_array($curl, $option);
+            $response = curl_exec($curl);
+            $result = json_decode($response, true);
+            curl_close($curl);
+
+            $Repluser->group_id = $result['groupId'];
         }
 
         $Logs = $this->getLog($User, null, $Scenario->stage_id);
