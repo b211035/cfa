@@ -122,8 +122,8 @@
                       })
 
                 }
-
-                this.$http.post('/api/repl', this.params)
+                // staging用
+                this.$http.post('/staging/api/repl', this.params)
                     .then(
                         response =>  {
 
