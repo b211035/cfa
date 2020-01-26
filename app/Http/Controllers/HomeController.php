@@ -146,6 +146,7 @@ class HomeController extends Controller
             curl_close($curl);
 
             $Repluser->group_id = $result['groupId'];
+            $Repluser->save();
         }
 
         $Logs = $this->getLog($User, null, $Scenario->stage_id);
