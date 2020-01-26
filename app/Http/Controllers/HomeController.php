@@ -144,8 +144,8 @@ class HomeController extends Controller
             $response = curl_exec($curl);
             $result = json_decode($response, true);
             curl_close($curl);
-            $Repluser->repl_group_id = $result['groupId'];
-            $Repluser->save();
+            Repluser::where([ ['user_id', $User->id], ['bot_id', $Bot->id] ])->update(['repl_group_id' => $result['groupId']]);
+            $Repluser = Repluser::where([ ['user_id', $User->id], ['bot_id', $Bot->id] ])->first();
         }
 
         $Logs = $this->getLog($User, null, $Scenario->stage_id);
