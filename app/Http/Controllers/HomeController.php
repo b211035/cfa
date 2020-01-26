@@ -126,7 +126,7 @@ class HomeController extends Controller
             ]);
         }
 
-        if (!$Repluser->group_id) {
+        if (!$Repluser->repl_group_id) {
             $api_key = $Bot->api_key;
             $header = ['Content-Type: application/json', 'x-api-key: '.$api_key];
             $body = ['botId' => $Bot->bot_id];
@@ -144,8 +144,7 @@ class HomeController extends Controller
             $response = curl_exec($curl);
             $result = json_decode($response, true);
             curl_close($curl);
-
-            $Repluser->group_id = $result['groupId'];
+            $Repluser->repl_group_id = $result['groupId'];
             $Repluser->save();
         }
 

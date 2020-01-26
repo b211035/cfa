@@ -109,7 +109,7 @@ class ApiController extends Controller
         $header = ['Content-Type: application/json', 'x-api-key: '.$api_key];
         $body = [
             'appUserId' => $Repluser->repl_user_id,
-            'groupId' => $Repluser->group_id,
+            'groupId' => $Repluser->repl_group_id,
             'botId' => $BotAndScenario->bot_id,
             'voiceText' => $contents,
             'initTalkingFlag' => ($contents == 'init') ?? true || false,

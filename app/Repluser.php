@@ -19,7 +19,7 @@ class Repluser extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'bot_id','repl_user_id'
+        'user_id', 'bot_id','repl_user_id','repl_group_id'
     ];
 
     public function User()
